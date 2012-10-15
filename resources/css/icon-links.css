@@ -1,0 +1,30 @@
+.info
+{
+	line-height: 16px;
+	font-size: 11px;
+	padding: 8px 0;
+}
+
+.info>span, .info>a, .gotop
+{
+	background: url(img/icons.gif) no-repeat;
+	padding-left: 22px;
+	margin-left: 16px;
+	height: 16px;
+	display: inline-block;
+}
+
+a.read-more
+{
+	padding: 1px 0 10px 50px;
+	font-style: italic;
+}
+
+.author   { background-position: 0   -0px !important; }
+.date     { background-position: 0  -48px !important; }
+.edit     { background-position: 0  -64px !important; }
+.comments { background-position: 0  -96px !important; }
+.tags     { background-position: 0 -400px !important; }
+.category { background-position: 0 -480px !important; }
+.gotop    { background-position: 0 -304px !important; }
+

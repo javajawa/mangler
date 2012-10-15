@@ -1,0 +1,24 @@
+blockquote
+{
+	background-color: rgb(240, 240, 255);
+	background-color: rgba(240, 240, 255, 0.3);
+
+	display: block; position: relative;
+
+	margin: 5px; padding: 5px;
+	white-space: pre-wrap;
+
+	border:1px solid #CCC; border-radius: 5px;
+}
+
+blockquote::before, blockquote::after
+{
+	position: absolute;
+
+	font-family: 'Marcellus SC', serif;
+	font-size: 104px;
+	color: rgba(0, 0, 0, 0.3);
+}
+blockquote::before { content: "“"; top: -40px; left: 0; }
+blockquote::after  { content: "”"; bottom: -94px; right: 0; }
+

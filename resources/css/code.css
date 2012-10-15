@@ -1,0 +1,17 @@
+code
+{
+	background: rgba(224, 224, 224, 0.5);
+
+	border: 1px solid #CCC; border-radius: 5px;
+
+	display: block;
+	margin: 5px; padding: 2px;
+	white-space: pre-wrap;
+
+	max-height: 15em;
+	overflow: auto;
+}
+
+code:hover, code.inline { max-height: none; }
+code.stackframe { white-space: nowrap; }
+

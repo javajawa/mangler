@@ -1,0 +1,11 @@
+footer
+{
+	display: block; position: absolute; bottom: 0;
+	width: 100%; height: 50px;
+
+	margin: 0 0 0 -270px;
+	border-top: 2px outset rgba(128, 128, 128, 0.5);
+}
+
+footer>nav { text-align: center; }
+

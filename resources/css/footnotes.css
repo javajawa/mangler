@@ -1,0 +1,31 @@
+ol.footnotes, ol.citations
+{
+	border-top: 1px solid gray;
+	font-size: 85%;
+}
+
+ol.footnotes>li
+{
+	margin: 0.3ex 0;
+}
+
+ol.footnotes>li:target, .footnote:target, .citation:target
+{
+	background: rgba(255, 224, 0, 0.9);
+}
+
+.footnote:before, .citation:before
+{
+	content: '[';
+}
+
+.footnote:after
+{
+	content: '] ';
+}
+
+.citation:after
+{
+	content: ' ↗] ';
+}
+

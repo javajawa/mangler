@@ -1,0 +1,63 @@
+html
+{
+	background: rgb(200, 200, 224);
+	background-image: linear-gradient(to bottom,
+		rgba(0, 0, 0, 0.75) 0px,
+		rgba(0, 0, 0, 0.65) 93px,
+		rgba(128, 128, 192, 0.65) 103px,
+		rgba(128, 128, 128, 0.4) 100%),
+		url(img/background.png);
+	background-image: -ms-linear-gradient(to bottom,
+		rgba(0, 0, 0, 0.75) 0px,
+		rgba(0, 0, 0, 0.65) 93px,
+		rgba(128, 128, 192, 0.65) 103px,
+		rgba(128, 128, 128, 0.4) 100%),
+		url(img/background.png);
+	background-image: -webkit-linear-gradient(top,
+		rgba(0, 0, 0, 0.75) 0px,
+		rgba(0, 0, 0, 0.65) 93px,
+		rgba(160, 160, 192, 0.4) 103px,
+		rgba(160, 160, 160, 0.4) 100%),
+		url(img/background.png);
+	background-image: -moz-linear-gradient(
+		rgba(0, 0, 0, 0.75) 0px,
+		rgba(0, 0, 0, 0.65) 93px,
+		rgba(128, 128, 192, 0.65) 103px,
+		rgba(128, 128, 128, 0.4) 100%),
+		url(img/background.png);
+
+	color: #000;
+	font-family: Nunito,Calibri,'Open Sans',Helvetica,sans-serif;
+	font-size: 14px;
+	min-height: 100%;
+	overflow-y: scroll;
+}
+
+body
+{
+	position: relative;
+	max-width: 140ex;
+	margin: 0 auto;
+	padding: 0px 20px 55px 270px;
+	box-sizing: border-box;
+
+	background-color : rgba(255, 255, 255, 0.15);
+}
+
+hr
+{
+	border: rgba(192, 192, 192, 0.5) solid outset;
+	margin: 0 -20px;
+}
+
+.flash
+{
+	width: 40ex; text-align: center;
+	padding: 5px; margin: 8px;
+	font-size: 16px;
+
+	border: 2px outset rgba(255, 255, 0, 0.2);
+	background: rgba(255, 255, 0, 0.2);
+	border-radius: 15px;
+}
+

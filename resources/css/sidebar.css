@@ -1,0 +1,19 @@
+#sidebar
+{
+	position: absolute;
+	left: 10px; top: 100px;	bottom: 50px;
+	width: 240px;
+	border-right: 2px outset rgba(192, 192, 192, 0.5);
+
+	padding-top: 8px;
+	overflow-x: hidden;
+}
+
+.feed
+{
+	line-height: 25px;
+	background: url(img/rss.png) no-repeat;
+	display: block;
+	height: 25px;
+	padding-left: 30px;
+}
