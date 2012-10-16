@@ -25,29 +25,27 @@ html
 		rgba(128, 128, 160, 0.5) 103px,
 		rgba(128, 128, 160, 0.5) 100%),
 		url(img/background.png);
+	background-image: -o-linear-gradient(
+		rgba(0, 0, 0, 0.75) 0px,
+		rgba(0, 0, 0, 0.65) 93px,
+		rgba(128, 128, 160, 0.5) 103px,
+		rgba(128, 128, 160, 0.5) 100%),
+		url(img/background.png);
 
-	color: #000;
 	font-family: Nunito,Calibri,'Open Sans',Helvetica,sans-serif;
-	font-size: 14px;
-	min-height: 100%;
-	overflow-y: scroll;
+	font-size: 14px; color: #000;
+	min-height: 100%; overflow-y: scroll;
 }
 
 body
 {
 	position: relative;
-	max-width: 140ex;
+	max-width: 140ex; min-height: 400px;
 	margin: 0 auto;
 	padding: 0px 20px 55px 270px;
 	box-sizing: border-box;
 
 	background-color : rgba(255, 255, 255, 0.15);
-}
-
-hr
-{
-	border: rgba(192, 192, 192, 0.5) solid outset;
-	margin: 0 -20px;
 }
 
 .flash

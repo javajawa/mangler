@@ -27,23 +27,25 @@ class Post extends Renderer
 		$url = urlencode($this->view->getUri($this->post));
 
 		return <<<EOF
-<h2>{$this->post->title}</h2>
-<div class="info">
-	<span class="date">{$this->post->timestamp}</span>
-	<a href="#comments" class="comments">{$this->post->commentcount} {$commentWord}</a>
-</div>
+<article>
+	<h2>{$this->post->title}</h2>
+	<div class="info">
+		<span class="date">{$this->post->timestamp}</span>
+		<a href="#comments" class="comments">{$this->post->commentcount} {$commentWord}</a>
+	</div>
 
-{$this->post->content}
+	{$this->post->content}
 
-<div class="info">
-	<span class="tags">Tags: {$tags}</span>
-	<span class="comments">{$this->post->commentcount} Comments</span>
-	<span>Share:
-		<a href="http://facebook.com/sharer.php?u={$url}">Facebook</a>
-		<a href="http://twitter.com/share?text={$urlTitle}&url={$url}">Twitter</a>
-		<a href="http://plus.google.com/share?url={$url}">Google+</a>
-	</span>
-</div>
+	<div class="info">
+		<span class="tags">Tags: {$tags}</span>
+		<span class="comments">{$this->post->commentcount} Comments</span>
+		<span>Share:
+			<a href="http://facebook.com/sharer.php?u={$url}">Facebook</a>
+			<a href="http://twitter.com/share?text={$urlTitle}&amp;url={$url}">Twitter</a>
+			<a href="http://plus.google.com/share?url={$url}">Google+</a>
+		</span>
+	</div>
+</article>
 
 EOF;
 	}

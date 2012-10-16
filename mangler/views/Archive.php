@@ -33,7 +33,7 @@ class Archive extends View
 
 		foreach ($this->posts as $post)
 		{
-			echo $post->render(3);
+			echo $post->render(2);
 
 			if (count($this->posts) !== ++$i)
 				printf('%s<hr />%s', $indent, PHP_EOL);

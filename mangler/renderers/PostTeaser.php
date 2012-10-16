@@ -42,7 +42,7 @@ class PostTeaser extends Renderer
 		$commentWord = (1 === (int)$this->post->commentcount ? 'Comment' : 'Comments');
 
 		return <<<EOF
-<div class="post">
+<article>
 	<h2><a href="{$link}">{$this->post->title}</a></h2>
 	<div class="info">
 		<span class="date">{$this->post->timestamp}</span>
@@ -57,7 +57,7 @@ class PostTeaser extends Renderer
 		</span>
 		<a href="{$link}#comments" class="comments">{$this->post->commentcount} {$commentWord}</a>
 	</div>
-</div>
+</article>
 
 EOF;
 	}

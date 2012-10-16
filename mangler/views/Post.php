@@ -12,9 +12,9 @@ class Post extends View
 	public function render()
 	{
 		$this->head();
-		echo $this->post->render(3);
-		echo $this->comments->render(3);
-		echo $this->form->render(3);
+		echo $this->post->render(2);
+		echo $this->comments->render(2);
+		echo $this->form->render(2);
 		$this->foot();
 	}
 

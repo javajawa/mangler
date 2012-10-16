@@ -29,10 +29,11 @@ class CommentTree extends Renderer
 		$countString = (1 === $this->count) ? 'Reply' : 'Replies';
 
 		return <<<EOF
-<div id="comments">
+<section id="comments">
 	<h3>{$this->count} {$countString}</h3>
 {$this->indent($this->renderChildren($this->root), 1)}
-</div>
+</section>
+
 EOF;
 	}
 
@@ -66,6 +67,7 @@ EOF;
 			<a href="?reply={$child->id}#reply" class="reply">Reply</a>
 		</div>
 	</div>
+
 EOF;
 		}
 		return $result . PHP_EOL . '</div>';

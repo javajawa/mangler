@@ -38,8 +38,10 @@ abstract class View extends \Acorn\View
 		$tags = $this->getTags();
 
 		echo <<<EOF
+<!DOCTYPE html>
 <html id="top">
 	<head>
+		<meta charset="UTF-8" />
 		<title>{$title}</title>
 		<link rel="stylesheet" type="text/css" href="{$this->getUri('/resources/style')}" />
 		<link href="http://fonts.googleapis.com/css?family=Marcellus+SC|Nunito:300" rel="stylesheet" type="text/css" />
@@ -49,7 +51,7 @@ abstract class View extends \Acorn\View
 			<h1><a href="{$this->getUri('/')}">{$this->blogTitle}</a></h1>
 			<div id="tagline">{$this->blogTagLine}</div>
 		</header>
-		<nav id="sidebar">
+		<div id="sidebar">
 			<h3>Search</h3>
 			<form id="searchbox" action="{$this->getUri('/search')}" method="get">
 				<input name="s" value="" />
@@ -62,15 +64,13 @@ abstract class View extends \Acorn\View
 			<h3>Tags</h3>
 			<ul>{$tags}
 			</ul>
-		</nav>
-		<div>
+		</div>
 
 EOF;
 	}
 
 	protected function foot()
 	{ echo <<<EOF
-		</div>
 		<footer>
 			<nav>
 				<a class="gotop" href="#top">Top</a>
