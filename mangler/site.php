@@ -14,7 +14,7 @@ define('CONTROLLER_PATH', PROJECT_PATH . 'controllers' . DIRECTORY_SEPARATOR);
 define('RENDERER_PATH',   PROJECT_PATH . 'renderers'   . DIRECTORY_SEPARATOR);
 define('ENTITY_PATH',     PROJECT_PATH . 'entities'    . DIRECTORY_SEPARATOR);
 define('VIEW_PATH',       PROJECT_PATH . 'views'       . DIRECTORY_SEPARATOR);
-define('PLUGIN_PATH',     PROJECT_PATH . 'plugins'     . DIRECTORY_SEPARATOR);
+define('PLUGIN_PATH',     TOP_PATH     . 'plugins'     . DIRECTORY_SEPARATOR);
 
 define('RESOURCE_PATH', TOP_PATH . 'resources' . DIRECTORY_SEPARATOR);
 
