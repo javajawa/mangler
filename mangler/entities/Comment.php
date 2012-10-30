@@ -15,7 +15,14 @@ class Comment extends Entity
 
 	public function __construct()
 	{
-		$this->timestamp = date('j M Y G:i', strtotime($this->timestamp));
+		$this->timestamp = strtotime($this->timestamp);
+	}
+
+	public function __get($name)
+	{
+		if ('timestamp' === $name)
+			return date('j M Y G:i', $this->timestamp);
+		return parent::__get($name);
 	}
 }
 

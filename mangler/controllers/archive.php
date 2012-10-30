@@ -21,9 +21,11 @@ class Archive extends Controller
 	public function time()
 	{
 		$page  = (int)$this->params->page;
-		$posts = Database::getArchives(array($page), 'Post');
+		$posts = Database::getArchives($page);
+		$count = (int)Database::countArchives();
+		$count = (int)floor($count / 10);
 
-		$view  = new \Mangler\View\Archive($page, 1, $posts);
+		$view  = new \Mangler\View\Archive($page, $count, $posts);
 		$view->render();
 	}
 
@@ -31,12 +33,14 @@ class Archive extends Controller
 	{
 		$tag   = $this->params->tag;
 		$page  = (int)$this->params->page;
-		$posts = Database::getArchives(array($tag, $page), 'Post');
+		$posts = Database::getArchives($page, $tag);
 
 		$tag   = Database::getTag(array($tag), 'Tag');
 		$tag   = $tag->singleton();
+		$count = $tag->itemcount;
+		$count = (int)floor($count / 10);
 
-		$view  = new \Mangler\View\Archive($page, 1, $posts, 'Posts tagged ' . $tag->tag);
+		$view  = new \Mangler\View\Archive($page, $count, $posts, 'Posts tagged ' . $tag->tag);
 		$view->render();
 	}
 }

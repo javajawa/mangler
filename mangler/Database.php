@@ -65,5 +65,21 @@ class Database
 			array(array($handle, $email), 'User')
 		)->singleton();
 	}
+
+	public static function getArchives($page, $tag=null)
+	{
+		if (null === $tag)
+			return self::__callStatic('getArchives', array(array($page), 'Post'));
+		else
+			return self::__callStatic('getArchives', array(
+				array($tag, $page), 'Post'));
+	}
+
+	public static function countArchives()
+	{
+		$result = self::__callStatic('countArchives', array());
+		$result = $result->singleton();
+		return $result->countArchives;
+	}
 }
 

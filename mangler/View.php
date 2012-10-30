@@ -69,11 +69,24 @@ abstract class View extends \Acorn\View
 EOF;
 	}
 
-	protected function foot()
-	{ echo <<<EOF
+	protected function foot($prev = null, $next = null, $ptext = 'Previous', $ntext = 'Next')
+	{
+		if (null !== $prev)
+			$prev = sprintf('<a href="%s" rel="previous">%s</a>', $prev, $ptext);
+		else
+			$prev = '';
+
+		if (null !== $next)
+			$next = sprintf('<a href="%s" rel="next">%s</a>', $next, $ntext);
+		else
+			$next = '';
+
+		echo <<<EOF
 		<footer>
 			<nav>
+				{$prev}
 				<a class="gotop" href="#top">Top</a>
+				{$next}
 			</nav>
 		</footer>
 	</body>

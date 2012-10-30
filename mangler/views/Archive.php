@@ -39,8 +39,12 @@ class Archive extends View
 				printf('%s<hr />%s', $indent, PHP_EOL);
 		}
 
-		$this->foot();
-		(int)$indent;
+		$prev = (0 !== $this->page) ?
+			$this->getUri('/page/' . ($this->page - 1)) : null;
+		$next = ($this->max !== $this->page) ?
+			$this->getUri('/page/' . ($this->page + 1)) : null;
+
+		$this->foot($prev, $next, 'Newer', 'Older');
 	}
 
 }
