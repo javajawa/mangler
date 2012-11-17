@@ -7,5 +7,5 @@ var tracking = {
 	}
 };
 
-tracking.xhr.open("POST", "/ajax/unload", true);
+tracking.xhr.open("POST", "/ajax/tracking", true);
 window.onbeforeunload = tracking.send;

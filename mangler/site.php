@@ -62,6 +62,9 @@ Routes::route('/resources/img/?file', 'resources', 'image');
 // RSS Feed
 Routes::route('/feed', 'archive', 'rss');
 
+// AJAX Requests
+Routes::route('/ajax/tracking', 'special', 'tracking');
+
 /**
  * <p>Class containing some pieces of constant information about the site
  * along with some site-specific utility functions</p>

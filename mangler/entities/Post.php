@@ -18,6 +18,8 @@ class Post extends Comment implements Syndicatable
 		parent::__construct();
 		$this->comments = NULL;
 		$this->tags     = NULL;
+
+		$this->parseTags($this->content);
 	}
 
 	public function getComments()

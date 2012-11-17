@@ -48,4 +48,9 @@ class Special extends Controller
 		$view = new Login($this->query->continue, $this->post);
 		$view->render();
 	}
+
+	public function tracking()
+	{
+		
+	}
 }
