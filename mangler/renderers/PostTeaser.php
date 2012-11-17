@@ -3,7 +3,9 @@ namespace Mangler\Renderer;
 
 use \Acorn\Renderer,
 	\Mangler\Site,
-	\Acorn\View;
+	\Acorn\View,
+	\Acorn\TagParser\TagParser,
+	\Mangler\Footnotes;
 
 class PostTeaser extends Renderer
 {
@@ -25,9 +27,11 @@ class PostTeaser extends Renderer
 		foreach ($matches[0] as $para)
 		{
 			$teaser .= $para . PHP_EOL;
-			if (strlen($teaser) > 300)
+			if (strlen($teaser) > 500)
 				break;
 		}
+		Footnotes::reset($this->post->slug);
+		$teaser = TagParser::strip($teaser);
 		$teaser = wordwrap($teaser);
 
 		// Build the tag list

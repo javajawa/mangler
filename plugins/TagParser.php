@@ -50,6 +50,36 @@ class TagParser
 		$output .= substr($str, $end);
 		return $output;
 	}
+	public static function strip($str)
+	{
+		$matchString = implode('|', array_keys(self::$tags));
+		$matchString = sprintf('/\[(%s)(.*)(\/)?\]/smU', $matchString);
+
+		$offset  = 0;
+		$end     = 0;
+		$matches = array();
+		$output  = '';
+
+		while (1 === preg_match($matchString, $str, $matches, PREG_OFFSET_CAPTURE, $offset))
+		{
+
+			$offset  = $matches[0][1] + strlen($matches[0][0]);
+			$tag     = $matches[1][0];
+
+			// Capture non-tag content
+			$output .= substr($str, $end, $matches[0][1] - $end);
+
+			if (false === empty($matches[3][0])) // Self-closing tag
+				$end     = $offset;
+			else
+				$end     = self::match($str, $offset, $tag);
+
+			$offset  = $end;
+		}
+
+		$output .= substr($str, $end);
+		return $output;
+	}
 
 	protected static function match($str, $offset, $tag)
 	{
