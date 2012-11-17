@@ -56,6 +56,7 @@ Routes::route('/reply/?parent', 'post', 'reply');
 
 // Styles and other resources
 Routes::route('/resources/style', 'resources', 'style');
+Routes::route('/resources/js',    'resources', 'script');
 Routes::route('/resources/img/?file', 'resources', 'image');
 
 // RSS Feed

@@ -66,9 +66,6 @@ class Controller extends \Acorn\Controller
 			case 'application/json':
 				ob_start('json_encode');
 				break;
-			case 'text/javascript':
-				ob_start(function ($c) { return \Acorn\JsMin\JsMin::minify($c); });
-				break;
 			default:
 				ob_start();
 		}

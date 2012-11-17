@@ -38,6 +38,32 @@ class Resources extends Controller
 		}
 	}
 
+	public function script()
+	{
+		$files = glob(RESOURCE_PATH . 'js/*.js');
+
+		$tag  = '';
+		foreach ($files as $file)
+			$tag .= `md5sum "{$file}"`;
+
+		$this->eTag = md5($tag);
+		$this->cachePublic = true;
+		$this->cacheTime   = Time::LUNAR_MONTH;
+
+		if ($this->ifMatch() && false)
+			return;
+
+		$this->resetBuffer('text/javascript');
+
+		foreach ($files as $file)
+		{
+			echo '/* ' . $file . ' */' . PHP_EOL;
+			$fh = fopen($file, 'rb');
+			fpassthru($fh);
+			fclose($fh);
+		}
+	}
+
 	public function image()
 	{
 		$file = $this->params->file;
