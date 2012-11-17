@@ -184,7 +184,7 @@ class Controller extends \Acorn\Controller
 		exit;
 	}
 
-	protected function min($str)
+	public function min($str)
 	{
 		return preg_replace('/[\n\t ][\n\t ]+/', ' ', $str);
 	}

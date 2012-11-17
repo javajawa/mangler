@@ -57,7 +57,7 @@ abstract class View extends \Acorn\View
 		<div id="sidebar">
 			<h3>Search</h3>
 			<form id="searchbox" action="{$this->getUri('/search')}" method="get">
-				<input name="s" value="" />
+				<input name="s" value="" placeholder="Blog search" />
 				<input type="image" src="{$this->getUri('/resources/img/searchbox.gif')}" alt="search" />
 			</form>
 
