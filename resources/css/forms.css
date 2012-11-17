@@ -2,7 +2,6 @@ fieldset
 {
 	border-radius: 8px;
 	border-style: outset;
-	padding: 0 10px;
 }
 
 textarea
@@ -12,6 +11,8 @@ textarea
 	min-height: 6em;
 	margin: 5px 0;
 	resize: vertical;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
 }
 
 input, textarea
