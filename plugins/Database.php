@@ -14,9 +14,9 @@ class Database
 	protected $nsProcedure;
 	protected $nsEntities;
 
-	public function __construct($host, $user, $pass, $db, $procedureNamespace = '', $entityNamesapce = '')
+	public function __construct($connstring, $procedureNamespace = '', $entityNamesapce = '')
 	{
-		$this->instance = @pg_connect(sprintf('host=%s user=%s password=%s dbname=%s', $host, $user, $pass, $db));
+		$this->instance = @pg_connect($connstring);
 
 		if (false === $this->instance)
 			throw new DatabaseConnectionException('Could not connect to database', 0);
