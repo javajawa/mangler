@@ -1,13 +1,13 @@
 header
 {
 	height: 85px;
-	margin: 0 -20px 20px -200px;
-	padding: 5px;
+	margin: -35px -40px 20px -220px;
+	padding: 10px 30px 0 30px;
 	background-color: #000;
-	background-color: rgba(0, 0, 0, 0.6);
-	box-shadow: 0 0 10px 8px rgba(0, 0, 0, 0.6);
-	border-bottom-right-radius: 10px;
-	border-bottom-left-radius: 10px;
+	background-color: hsla(40, 50%, 15%, 0.25);
+	box-shadow: 0 0 10px 8px hsla(40, 50%, 15%, 0.25);
+	border-bottom-right-radius: 20px;
+	border-bottom-left-radius: 20px;
 }
 
 header>h1

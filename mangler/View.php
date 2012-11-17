@@ -50,6 +50,7 @@ abstract class View extends \Acorn\View
 		<script type="text/javascript" src="/resources/js" async defer></script>
 	</head>
 	<body>
+		&nbsp;
 		<header>
 			<h1><a href="{$this->getUri('/')}">{$this->blogTitle}</a></h1>
 			<div id="tagline">{$this->blogTagLine}</div>
