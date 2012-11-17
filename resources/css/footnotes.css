@@ -1,31 +1,46 @@
 ol.footnotes, ol.citations
 {
-	border-top: 1px solid gray;
-	font-size: 85%;
+	border-top: 1px solid #888;
+	font-size: 90%;
+	list-style: none;
+	margin: 10px;
+	padding: 10px;
 }
 
 ol.footnotes>li
 {
-	margin: 0.3ex 0;
+	padding: 3px 10px;
+	border-radius: 8px;
 }
 
 ol.footnotes>li:target, .footnote:target, .citation:target
 {
-	background: rgba(255, 224, 0, 0.9);
+	background-color: #ffe000;
+	background: rgba(255, 224, 0, 0.4);
+}
+
+.footnote, .citation
+{
+	font-size: 75%;
+	font-weight: bold;
+	vertical-align: top;
 }
 
 .footnote:before, .citation:before
 {
 	content: '[';
+	vertical-align: top;
 }
 
 .footnote:after
 {
-	content: '] ';
+	content: ']';
+	vertical-align: top;
 }
 
 .citation:after
 {
-	content: ' ↗] ';
+	content: ' ↗]';
+	vertical-align: top;
 }
 
