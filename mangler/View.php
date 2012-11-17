@@ -28,7 +28,7 @@ abstract class View extends \Acorn\View
 
 	public function getAvatarUri($email)
 	{
-		return 'http://gravatar.com/avatar/' . md5(strtolower($email));
+		return 'http://' . WWW_PATH . '/avatar/' . md5(strtolower($email)) . '/50';
 	}
 
 	protected function head()

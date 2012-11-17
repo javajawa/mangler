@@ -66,6 +66,11 @@ class Controller extends \Acorn\Controller
 			case 'application/json':
 				ob_start('json_encode');
 				break;
+			case 'text/html':
+			case 'text/css':
+			case 'text/javascript':
+				ob_start(array(&$this, 'min'));
+				break;
 			default:
 				ob_start();
 		}
@@ -177,5 +182,10 @@ class Controller extends \Acorn\Controller
 		$view->render();
 
 		exit;
+	}
+
+	protected function min($str)
+	{
+		return preg_replace('/[\n\t ][\n\t ]+/', ' ', $str);
 	}
 }
