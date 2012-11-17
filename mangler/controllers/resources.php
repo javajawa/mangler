@@ -31,7 +31,9 @@ class Resources extends Controller
 
 		foreach ($files as $file)
 		{
-			echo '/* ' . $file . ' */' . PHP_EOL;
+			if (DEBUG)
+				echo '/* ' . $file . ' */' . PHP_EOL;
+
 			$fh = fopen($file, 'rb');
 			fpassthru($fh);
 			fclose($fh);
