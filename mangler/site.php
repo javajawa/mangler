@@ -81,7 +81,7 @@ class Site
 		else
 			trigger_error('Unable to find link for ' . $e, E_USER_ERROR);
 
-		return 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['SCRIPT_NAME'] . $stub;
+		return 'http://' . WWW_PATH . $stub;
 	}
 }
 

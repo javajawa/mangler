@@ -18,11 +18,11 @@ abstract class View extends \Acorn\View
 			return Site::getUri($target);
 		else
 		{
-			$src = $_SERVER['SCRIPT_NAME'];
+			$src = WWW_PATH;
 			if ('/' === substr($src, -1))
 				$src = substr($src, 0, strlen($src) - 1);
 
-			return 'http://' . $_SERVER['HTTP_HOST'] . $src . $target;
+			return 'http://' . $src . $target;
 		}
 	}
 

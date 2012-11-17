@@ -54,7 +54,7 @@ class Controller extends \Acorn\Controller
 		if (true === $session)
 		{
 			session_name(Site::sessionCookie);
-			session_set_cookie_params(time() + 3600, $_SERVER['SCRIPT_NAME'].'/');
+			session_set_cookie_params(time() + 3600, getenv('PUBLIC_PATH'));
 			session_start();
 		}
 	}
@@ -73,8 +73,7 @@ class Controller extends \Acorn\Controller
 
 	public function after()
 	{
-		header('HTTP 1.1/' . $this->responseCode . ' ' . \Acorn\Acorn::HTTPStatusMessage($this->responseCode), true, $this->responseCode);
-		header('Content-type: ' . $this->contentType);
+		header('Content-type: ' . $this->contentType, true, $this->responseCode);
 
 		// HTTP Cache-control
 		if (0 < $this->cacheTime)
@@ -105,7 +104,7 @@ class Controller extends \Acorn\Controller
 			header('ETag: ' . $this->eTag);
 			if ($this->eTag === $requestETag)
 			{
-				header('HTTP 1.1/304 Not Modified', true, 304);
+				header('Content-type: ' . $this->contentType, true, 304);
 				return;
 			}
 		}
@@ -128,7 +127,7 @@ class Controller extends \Acorn\Controller
 		if (1 === preg_match('#^https?://#', $uri))
 			header('Location: ' . $uri, true, $code);
 		else
-			header('Location: http://' . $_SERVER['HTTP_HOST'] . $_SERVER['SCRIPT_NAME'] . $uri, true, $code);
+			header('Location: http://' . WWW_PATH . $uri, true, $code);
 	}
 
 	public function ifMatch($tag = false)

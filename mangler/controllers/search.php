@@ -30,7 +30,7 @@ class Search extends Controller
 	public function init()
 	{
 		if (true === empty($this->query->s))
-			$this->redirect ('/', 301);
+			$this->redirect('/', 301);
 
 		$this->redirect('/search/' . urlencode($this->query->s), 301);
 	}
