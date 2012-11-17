@@ -4,7 +4,9 @@ namespace Mangler\Entity;
 use \Acorn\Entity,
 	\Acorn\Syndicatable,
 	\Mangler\Database,
-	\Mangler\Renderer\PostTeaser;
+	\Mangler\Renderer\PostTeaser,
+	\Mangler\Footnotes,
+	\Acorn\TagParser\TagParser;
 
 class Post extends Comment implements Syndicatable
 {
@@ -64,9 +66,13 @@ class Post extends Comment implements Syndicatable
 		return $p->render(0);
 	}
 
-	public function content($view)
+	public function content($view, $parse = true)
 	{
-		return $this->content;
+		if (!$parse)
+			return $this->content;
+
+		Footnotes::reset();
+		return TagParser::parse($this->content . ' [lons /]');
 	}
 }
 

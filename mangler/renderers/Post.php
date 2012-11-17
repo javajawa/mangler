@@ -34,7 +34,7 @@ class Post extends Renderer
 		<a href="#comments" class="comments">{$this->post->commentcount} {$commentWord}</a>
 	</div>
 
-	{$this->post->content}
+	{$this->post->content($this->view)}
 
 	<div class="info">
 		<span class="tags">Tags: {$tags}</span>
