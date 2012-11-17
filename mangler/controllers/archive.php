@@ -2,7 +2,9 @@
 namespace Mangler\Controller;
 
 use \Mangler\Controller,
-	\Mangler\Database;
+	\Mangler\Database,
+	\Mangler\Site,
+	\Mangler\View\RSS;
 
 class Archive extends Controller
 {
@@ -41,6 +43,14 @@ class Archive extends Controller
 		$count = (int)floor($count / 10);
 
 		$view  = new \Mangler\View\Archive($page, $count, $posts, 'Posts tagged ' . $tag->tag);
+		$view->render();
+	}
+
+	public function rss()
+	{
+		$this->resetBuffer('application/rss+xml');
+		$posts = Database::getArchives(0);
+		$view  = new RSS($posts, Site::title, '/', '/resources/logo', Site::tagline);
 		$view->render();
 	}
 }

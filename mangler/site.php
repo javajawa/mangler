@@ -58,6 +58,9 @@ Routes::route('/reply/?parent', 'post', 'reply');
 Routes::route('/resources/style', 'resources', 'style');
 Routes::route('/resources/img/?file', 'resources', 'image');
 
+// RSS Feed
+Routes::route('/feed', 'archive', 'rss');
+
 /**
  * <p>Class containing some pieces of constant information about the site
  * along with some site-specific utility functions</p>

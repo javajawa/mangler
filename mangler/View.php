@@ -45,6 +45,8 @@ abstract class View extends \Acorn\View
 		<title>{$title}</title>
 		<link rel="stylesheet" type="text/css" href="{$this->getUri('/resources/style')}" />
 		<link href="http://fonts.googleapis.com/css?family=Marcellus+SC|Nunito:300" rel="stylesheet" type="text/css" />
+		<link rel="alternate" href="{$this->getUri('/feed')}" type="application/rss+xml" />
+		<link rel="icon" href="{$this->getUri('/resources/logo')}" type="image/png" />
 	</head>
 	<body>
 		<header>
@@ -59,7 +61,7 @@ abstract class View extends \Acorn\View
 			</form>
 
 			<h3>Feeds</h3>
-			<a class="feed" href="boo">RSS</a>
+			<a class="feed" rel="alternate" href="{$this->getUri('/feed')}">RSS</a>
 
 			<h3>Tags</h3>
 			<ul>{$tags}
