@@ -50,7 +50,7 @@ class Archive extends Controller
 	{
 		$this->resetBuffer('application/rss+xml');
 		$posts = Database::getArchives(0);
-		$view  = new RSS($posts, Site::title, '/', '/resources/logo', Site::tagline);
+		$view  = new RSS($posts, Site::title, '/', '/resources/img/bug.png', Site::tagline);
 		$view->render();
 	}
 }
