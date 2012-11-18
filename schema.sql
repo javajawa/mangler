@@ -5,10 +5,10 @@ CREATE PROCEDURAL LANGUAGE plpgsql;
 SET search_path = blog, pg_catalog;
 
 CREATE TYPE status AS ENUM (
-    'draft',
-    'published',
-    'spam',
-    'moderate'
+	'draft',
+	'published',
+	'spam',
+	'moderate'
 );
 
 -- Digest function from postgres-contrib
@@ -17,8 +17,8 @@ CREATE FUNCTION digest(bytea, text) RETURNS bytea LANGUAGE c IMMUTABLE STRICT AS
 
 -- Trigger for creating associated blobs for posts/comments
 CREATE FUNCTION "createBlob"() RETURNS trigger
-    LANGUAGE plpgsql STRICT SECURITY DEFINER
-    AS $$BEGIN
+	LANGUAGE plpgsql STRICT SECURITY DEFINER
+	AS $$BEGIN
 		INSERT INTO blob (post_id, post_data, search_data)
 			VALUES (LASTVAL(), NULL, NULL);
 
@@ -27,8 +27,8 @@ CREATE FUNCTION "createBlob"() RETURNS trigger
 
 -- Trigger for setting the root property correctly on root objects
 CREATE FUNCTION "setRoot"() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$BEGIN
+	LANGUAGE plpgsql
+	AS $$BEGIN
 		IF new.root IS NULL THEN
 			new.root = new.post_id;
 		END IF;
@@ -38,23 +38,23 @@ CREATE FUNCTION "setRoot"() RETURNS trigger
 
 -- Password hashing function
 CREATE FUNCTION "hashPassword"(handle text, password text) RETURNS character
-    LANGUAGE sql IMMUTABLE STRICT
-    AS $_$SELECT encode(digest('v7qZYgtBXEt4vOraV4p++OrZFXSwiJn3uvz11X7Pj9GE/tMuIelN4lWSINujWHIIYPbKjB27ANcnv75sMbaCdw==' || $1 || $2 || 'mangle', 'sha512'), 'hex')$_$;
+	LANGUAGE sql IMMUTABLE STRICT
+	AS $_$SELECT encode(digest('v7qZYgtBXEt4vOraV4p++OrZFXSwiJn3uvz11X7Pj9GE/tMuIelN4lWSINujWHIIYPbKjB27ANcnv75sMbaCdw==' || $1 || $2 || 'mangle', 'sha512'), 'hex')$_$;
 
 -- Function for {x,ht}ml stripping tags from text
 CREATE FUNCTION "stripTags"(text) RETURNS text
-    LANGUAGE sql
-    AS $_$
+	LANGUAGE sql
+	AS $_$
 		SELECT regexp_replace(regexp_replace($1, E'(?x)<[^>]*?(\s alt \s* = \s* ([\'"]) ([^>]*?) \2) [^>]*? >', E'\3'), E'(?x)(< [^>]*? >)', '', 'g')
 	$_$;
 
 -- User Table
 CREATE TABLE "user" (
-    user_id integer               NOT NULL,
-    handle  character varying(48) NOT NULL,
-    email   character varying(96) NOT NULL,
-    pass    character(128),
-    perms   integer               NOT NULL DEFAULT 0
+	user_id integer               NOT NULL,
+	handle  character varying(48) NOT NULL,
+	email   character varying(96) NOT NULL,
+	pass    character(128),
+	perms   integer               NOT NULL DEFAULT 0
 );
 
 CREATE SEQUENCE user_id_seq START WITH 1 INCREMENT BY 1 NO MAXVALUE NO MINVALUE CACHE 1;
@@ -69,14 +69,14 @@ CREATE INDEX "user-idx-perms" ON "user" USING btree (perms);
 
 -- Post Table
 CREATE TABLE "post" (
-    post_id     integer               NOT NULL,
-    "timestamp" timestamp             NOT NULL,
-    user_id     integer               NOT NULL,
-    title       character varying(64) NOT NULL DEFAULT ''::character varying,
-    slug        character varying(48)          DEFAULT NULL::character varying,
-    root        integer,
-    reply       integer,
-    status      status                DEFAULT 'moderate'::status
+	post_id     integer               NOT NULL,
+	"timestamp" timestamp             NOT NULL,
+	user_id     integer               NOT NULL,
+	title       character varying(64) NOT NULL DEFAULT ''::character varying,
+	slug        character varying(48)          DEFAULT NULL::character varying,
+	root        integer,
+	reply       integer,
+	status      status                DEFAULT 'moderate'::status
 );
 
 CREATE SEQUENCE post_id_seq START WITH 1 INCREMENT BY 1 NO MAXVALUE NO MINVALUE CACHE 1;
@@ -100,9 +100,9 @@ CREATE TRIGGER "set-post-root"   BEFORE INSERT ON post FOR EACH ROW EXECUTE PROC
 
 -- Tags
 CREATE TABLE "tags" (
-    tag_id   integer               NOT NULL,
-    tag      character varying(48) NOT NULL,
-    tag_slug character varying(32) NOT NULL
+	tag_id   integer               NOT NULL,
+	tag      character varying(48) NOT NULL,
+	tag_slug character varying(32) NOT NULL
 );
 
 ALTER TABLE ONLY "tags" ADD CONSTRAINT tags_pk PRIMARY KEY (tag_id);
@@ -115,9 +115,9 @@ ALTER TABLE ONLY "tags" ALTER COLUMN tag_id SET DEFAULT nextval('tag_id_seq'::re
 
 -- Post Blob Table
 CREATE TABLE "blob" (
-    post_id     integer  NOT NULL,
-    post_data   text,
-    search_data tsvector
+	post_id     integer  NOT NULL,
+	post_data   text,
+	search_data tsvector
 );
 
 ALTER TABLE ONLY "blob" ADD CONSTRAINT  blob_pk   PRIMARY KEY (post_id);
@@ -127,8 +127,8 @@ CREATE INDEX search_index ON "blob" USING gin (search_data);
 
 -- Post Tags Table
 CREATE TABLE "post_tags" (
-    post_id integer NOT NULL,
-    tag_id  integer NOT NULL
+	post_id integer NOT NULL,
+	tag_id  integer NOT NULL
 );
 
 ALTER TABLE ONLY "post_tags" ADD CONSTRAINT post_tags_pk PRIMARY KEY (post_id, tag_id);
@@ -139,7 +139,7 @@ CREATE INDEX "tag-idx-tag-id" ON post_tags USING btree (tag_id);
 
 -- Published Posts View
 CREATE VIEW "published_posts" AS
-    SELECT
+	SELECT
 		"post".post_id AS id,
 		"post"."timestamp",
 		"post".title,
@@ -167,7 +167,7 @@ CREATE VIEW "published_posts" AS
 
 -- All Comments View
 CREATE VIEW "all_comments" AS
-    SELECT
+	SELECT
 		"post".post_id AS id,
 		"post"."timestamp",
 		"post".title,
@@ -190,7 +190,7 @@ CREATE VIEW "all_comments" AS
 
 -- All Posts View
 CREATE VIEW "all_posts" AS
-    SELECT
+	SELECT
 		"post".post_id AS id,
 		"post"."timestamp",
 		"post".title,
@@ -208,7 +208,7 @@ CREATE VIEW "all_posts" AS
 
 -- All Tags View
 CREATE VIEW "all_tags" AS
-    SELECT
+	SELECT
 		"tags".tag,
 		"tags".tag_slug,
 		COUNT("post_tags".post_id) AS itemcount
@@ -221,8 +221,8 @@ CREATE VIEW "all_tags" AS
 SET search_path = public, pg_catalog;
 
 CREATE FUNCTION authenticate(handle text, password text) RETURNS blog."user"
-    LANGUAGE sql STABLE STRICT SECURITY DEFINER
-    AS $_$
+	LANGUAGE sql STABLE STRICT SECURITY DEFINER
+	AS $_$
 		SELECT * FROM "blog"."user"
 			WHERE "handle" = $1
 			AND "pass" = "blog"."hashPassword"($1, $2)
@@ -230,14 +230,14 @@ CREATE FUNCTION authenticate(handle text, password text) RETURNS blog."user"
 	$_$;
 
 CREATE FUNCTION "countArchives"() RETURNS bigint
-    LANGUAGE sql STABLE SECURITY DEFINER
-    AS $_$
+	LANGUAGE sql STABLE SECURITY DEFINER
+	AS $_$
 		SELECT COUNT(*) FROM "blog"."published_posts"
 	$_$;
 
 CREATE FUNCTION "createPost"(aid integer) RETURNS integer
-    LANGUAGE sql SECURITY DEFINER
-    AS $_$
+	LANGUAGE sql SECURITY DEFINER
+	AS $_$
 		INSERT INTO "blog"."post" (timestamp, user_id, status)
 			VALUES (NOW(), $1, 'draft'::status);
 
@@ -246,16 +246,16 @@ CREATE FUNCTION "createPost"(aid integer) RETURNS integer
 	$_$;
 
 CREATE FUNCTION "createPost"(handle character varying) RETURNS integer
-    LANGUAGE sql STRICT SECURITY DEFINER
-    AS $_$
+	LANGUAGE sql STRICT SECURITY DEFINER
+	AS $_$
 		SELECT "createPost"( 
 			(SELECT user_id FROM "blog"."user" WHERE handle = $1)
 		);
 	$_$;
 
 CREATE FUNCTION "createReply"(author integer, parent integer) RETURNS integer
-    LANGUAGE sql STRICT SECURITY DEFINER
-    AS $_$
+	LANGUAGE sql STRICT SECURITY DEFINER
+	AS $_$
 		INSERT INTO "blog"."post" (timestamp, user_id, status, root, reply)
 			SELECT NOW(), $1, 'draft'::status, root, $2
 				FROM   "blog"."post"
@@ -265,64 +265,70 @@ CREATE FUNCTION "createReply"(author integer, parent integer) RETURNS integer
 	$_$;
 
 CREATE FUNCTION "createTag"(name text, slug text) RETURNS integer
-    LANGUAGE sql STRICT SECURITY DEFINER
-    AS $_$INSERT INTO "blog"."tags" (tag, slug) VALUES($1, $2) RETURNING tag_id;$_$;
+	LANGUAGE sql STRICT SECURITY DEFINER
+	AS $_$INSERT INTO "blog"."tags" (tag, slug) VALUES($1, $2) RETURNING tag_id;$_$;
 
 CREATE FUNCTION "createUser"(handle text, email text, pass text) RETURNS integer
-    LANGUAGE sql SECURITY DEFINER
-    AS $_$INSERT INTO "blog"."user" (handle, email, pass)
+	LANGUAGE sql SECURITY DEFINER
+	AS $_$INSERT INTO "blog"."user" (handle, email, pass)
 
 VALUES ($1, $2, "blog"."hashPassword"($1 || $2, $3));
 
 SELECT LASTVAL()::integer;$_$;
 
 CREATE FUNCTION "getArchives"(page integer) RETURNS SETOF blog.published_posts
-    LANGUAGE sql STABLE STRICT SECURITY DEFINER ROWS 10
-    AS $_$SELECT * FROM "blog"."published_posts" OFFSET (10 * $1) LIMIT 10;$_$;
+	LANGUAGE sql STABLE STRICT SECURITY DEFINER ROWS 10
+	AS $_$SELECT * FROM "blog"."published_posts" OFFSET (10 * $1) LIMIT 10;$_$;
 
 CREATE FUNCTION "getArchives"(tag_slug text, page integer) RETURNS SETOF blog.published_posts
-    LANGUAGE sql STABLE STRICT SECURITY DEFINER COST 125 ROWS 10
-    AS $_$SELECT "blog"."published_posts".* FROM "blog"."published_posts" LEFT JOIN ("blog"."post_tags" NATURAL JOIN "blog"."tags") ON "blog"."published_posts".id = "blog"."post_tags".post_id WHERE "tag_slug" = $1 ORDER BY timestamp DESC OFFSET (10 * $2) LIMIT 10;$_$;
-	
+	LANGUAGE sql STABLE STRICT SECURITY DEFINER COST 125 ROWS 10
+	AS $_$SELECT "blog"."published_posts".* FROM "blog"."published_posts" LEFT JOIN ("blog"."post_tags" NATURAL JOIN "blog"."tags") ON "blog"."published_posts".id = "blog"."post_tags".post_id WHERE "tag_slug" = $1 ORDER BY timestamp DESC OFFSET (10 * $2) LIMIT 10;$_$;
+
 CREATE FUNCTION "getComments"(_post_id integer) RETURNS SETOF blog.all_comments
-    LANGUAGE sql STABLE STRICT SECURITY DEFINER ROWS 100
-    AS $_$SELECT * FROM all_comments WHERE root = $1;$_$;
+	LANGUAGE sql STABLE STRICT SECURITY DEFINER ROWS 100
+	AS $_$SELECT * FROM all_comments WHERE root = $1;$_$;
 
 CREATE FUNCTION "getComments"(_post_id integer, stat blog.status) RETURNS SETOF blog.all_comments
-    LANGUAGE sql STABLE STRICT SECURITY DEFINER
-    AS $_$SELECT * FROM all_comments WHERE root = $1 AND status = $2 ORDER BY reply ASC, timestamp ASC;$_$;
+	LANGUAGE sql STABLE STRICT SECURITY DEFINER
+	AS $_$SELECT * FROM all_comments WHERE root = $1 AND status = $2 ORDER BY reply ASC, timestamp ASC;$_$;
 
 CREATE FUNCTION "getPost"(_post_id integer) RETURNS blog.all_posts
-    LANGUAGE sql STABLE STRICT SECURITY DEFINER
-    AS $_$SELECT * FROM "blog"."all_posts" WHERE id = $1;$_$;
+	LANGUAGE sql STABLE STRICT SECURITY DEFINER
+	AS $_$SELECT * FROM "blog"."all_posts" WHERE id = $1;$_$;
 
-CREATE FUNCTION "getPost"(slug character varying) RETURNS blog.published_posts
-    LANGUAGE sql STABLE STRICT SECURITY DEFINER
-    AS $_$SELECT * FROM "blog"."published_posts" WHERE slug = $1;$_$;
+CREATE FUNCTION "getPost"(_post_id integer) RETURNS blog.all_posts
+	LANGUAGE sql STABLE STRICT SECURITY DEFINER
+	AS $_$SELECT * FROM "blog"."all_posts" WHERE id = $1;$_$;
+
+CREATE FUNCTION "getPosts"() RETURNS blog.all_posts
+	LANGUAGE sql STABLE STRICT SECURITY DEFINER
+	AS $_$
+		SELECT * FROM "blog"."all_posts"
+	$_$;
 
 CREATE FUNCTION "getRoot"(_post_id integer) RETURNS blog.all_posts
-    LANGUAGE sql IMMUTABLE STRICT
-    AS $_$SELECT * FROM all_posts WHERE id = (SELECT root FROM post WHERE post_id = $1);$_$;
+	LANGUAGE sql IMMUTABLE STRICT
+	AS $_$SELECT * FROM all_posts WHERE id = (SELECT root FROM post WHERE post_id = $1);$_$;
 
 CREATE FUNCTION "getTag"(_tag character) RETURNS blog.all_tags
-    LANGUAGE sql STABLE STRICT SECURITY DEFINER
-    AS $_$SELECT * FROM "blog"."all_tags" WHERE tag_slug = $1;$_$;
+	LANGUAGE sql STABLE STRICT SECURITY DEFINER
+	AS $_$SELECT * FROM "blog"."all_tags" WHERE tag_slug = $1;$_$;
 
 CREATE FUNCTION "getTags"() RETURNS SETOF blog.all_tags
-    LANGUAGE sql STABLE SECURITY DEFINER
-    AS $$SELECT * FROM all_tags;$$;
+	LANGUAGE sql STABLE SECURITY DEFINER
+	AS $$SELECT * FROM all_tags;$$;
 
 CREATE FUNCTION "getTags"(_post_id integer) RETURNS SETOF blog.tags
-    LANGUAGE sql STABLE STRICT SECURITY DEFINER
-    AS $_$
+	LANGUAGE sql STABLE STRICT SECURITY DEFINER
+	AS $_$
 		SELECT "blog"."tags".*
 		FROM "blog"."post_tags" NATURAL JOIN "blog"."tags"
 		WHERE post_id = $1;
 	$_$;
 
 CREATE FUNCTION "getUser"(_handle character, _email character) RETURNS blog."user"
-    LANGUAGE plpgsql STABLE STRICT SECURITY DEFINER
-    AS $_$
+	LANGUAGE plpgsql STABLE STRICT SECURITY DEFINER
+	AS $_$
 		DECLARE
 			u "blog"."user";
 		BEGIN
@@ -335,15 +341,15 @@ CREATE FUNCTION "getUser"(_handle character, _email character) RETURNS blog."use
 	$_$;
 
 CREATE FUNCTION "publishPost"(_post_id integer) RETURNS integer
-    LANGUAGE sql STRICT SECURITY DEFINER
-    AS $_$
+	LANGUAGE sql STRICT SECURITY DEFINER
+	AS $_$
 		UPDATE "blog"."post" SET status = 'published'::status WHERE post_id = $1;
 		SELECT root FROM "blog"."post" WHERE post_id = $1;
 	$_$;
 
 CREATE FUNCTION "search"(keywords text, page integer) RETURNS SETOF blog.published_posts
-    LANGUAGE sql STABLE STRICT SECURITY DEFINER COST 150 ROWS 10
-    AS $_$
+	LANGUAGE sql STABLE STRICT SECURITY DEFINER COST 150 ROWS 10
+	AS $_$
 		SELECT
 			"blog"."published_posts".*
 		FROM
@@ -359,20 +365,20 @@ CREATE FUNCTION "search"(keywords text, page integer) RETURNS SETOF blog.publish
 	$_$;
 
 CREATE FUNCTION "setPassword"(handle text, password text) RETURNS void
-    LANGUAGE sql STRICT SECURITY DEFINER
-    AS $_$
+	LANGUAGE sql STRICT SECURITY DEFINER
+	AS $_$
 		UPDATE "blog"."user" SET pass = "blog"."hashPassword"($1, $2) WHERE handle = $1;
 	$_$;
 
 CREATE FUNCTION "submitComment"(_post_id integer) RETURNS void
-    LANGUAGE sql STRICT SECURITY DEFINER
-    AS $_$
+	LANGUAGE sql STRICT SECURITY DEFINER
+	AS $_$
 		UPDATE "blog"."post" SET status = 'moderate'::status WHERE post_id = $1;
 	$_$;
 
 CREATE FUNCTION "tagPost"(_post_id integer, _tags integer[]) RETURNS void
-    LANGUAGE plpgsql STRICT SECURITY DEFINER
-    AS $_$
+	LANGUAGE plpgsql STRICT SECURITY DEFINER
+	AS $_$
 		DECLARE
 			x integer;
 		BEGIN
@@ -385,8 +391,8 @@ CREATE FUNCTION "tagPost"(_post_id integer, _tags integer[]) RETURNS void
 	$_$;
 
 CREATE FUNCTION "updatePost"(_post_id integer, _title text, _slug text, utime timestamp without time zone, _content text) RETURNS timestamp without time zone
-    LANGUAGE plpgsql SECURITY DEFINER
-    AS $_$
+	LANGUAGE plpgsql SECURITY DEFINER
+	AS $_$
 		DECLARE
 		  t TIMESTAMP;
 		  g CHARACTER VARYING(96);
@@ -418,7 +424,7 @@ CREATE FUNCTION "updatePost"(_post_id integer, _title text, _slug text, utime ti
 			post_data   = $5,
 			search_data = s
 		  WHERE post_id = $1;
-		 
+
 		  RETURN t;
 		END;
 	$_$;
