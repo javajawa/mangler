@@ -63,14 +63,14 @@ abstract class View extends \Acorn\View
 			</form>
 
 			<h3>Feeds</h3>
-			<a class="feed" rel="alternate" href="{$this->getUri('/feed')}">RSS</a>
+			<a id="feed" rel="alternate" href="{$this->getUri('/feed')}">RSS</a>
 
 			<h3>Tags</h3>
 			<ul>{$tags}
 			</ul>
 
 			<h3>Other</h3>
-			<a href="{$this->getUri('/sticky/cookies')}">Cookie Policy</a>
+			<a id="cookies" href="{$this->getUri('/sticky/cookies')}">Cookie Policy</a>
 		</div>
 
 EOF;
