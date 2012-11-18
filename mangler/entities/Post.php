@@ -72,7 +72,8 @@ class Post extends Comment implements Syndicatable
 			return $this->content;
 
 		Footnotes::reset($this->slug);
-		return TagParser::parse($this->content . ' [lons /]');
+		return TagParser::parse($this->content . ' <lons />');
+		object($view);
 	}
 }
 
