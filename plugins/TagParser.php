@@ -17,7 +17,7 @@ class TagParser
 	public static function parse($str)
 	{
 		$matchString = implode('|', array_keys(self::$tags));
-		$matchString = sprintf('/\[(%s)(.*)(\/)?\]/smU', $matchString);
+		$matchString = sprintf('/\<(%s)(.*)(\/)?\>/smU', $matchString);
 
 		$offset  = 0;
 		$end     = 0;
@@ -50,10 +50,11 @@ class TagParser
 		$output .= substr($str, $end);
 		return $output;
 	}
+
 	public static function strip($str)
 	{
 		$matchString = implode('|', array_keys(self::$tags));
-		$matchString = sprintf('/\[(%s)(.*)(\/)?\]/smU', $matchString);
+		$matchString = sprintf('/\<(%s)(.*)(\/)?\>/smU', $matchString);
 
 		$offset  = 0;
 		$end     = 0;
@@ -84,7 +85,7 @@ class TagParser
 	protected static function match($str, $offset, $tag)
 	{
 		$depth = 1;
-		$matchString = sprintf('/\[(?:%s.*(\/)?|(\/)%s)\]/smU', $tag, $tag);
+		$matchString = sprintf('/\<(?:%s.*(\/)?|(\/)%s)\>/smU', $tag, $tag);
 
 		while ($depth > 0)
 		{

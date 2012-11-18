@@ -419,7 +419,7 @@ CREATE FUNCTION "updatePost"(_post_id integer, _title text, _slug text, utime ti
 		  WHERE post_id = $1;
 
 		  IF ($5 IS NOT NULL) THEN
-			SELECT to_tsvector('english', $2 || coalesce("blog".strip_tags($5), '')) INTO s;
+			SELECT to_tsvector('english', $2 || coalesce("blog"."stripTags"($5), '')) INTO s;
 		  END IF;
 
 		  UPDATE "blog"."blob" SET
