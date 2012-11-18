@@ -68,6 +68,9 @@ abstract class View extends \Acorn\View
 			<h3>Tags</h3>
 			<ul>{$tags}
 			</ul>
+
+			<h3>Other</h3>
+			<a href="{$this->getUri('/sticky/cookies')}">Cookie Policy</a>
 		</div>
 
 EOF;
