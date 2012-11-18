@@ -18,7 +18,7 @@ class Error extends View
 		$this->head();
 
 		foreach ($this->errors as $error)
-			if ($error instanceof \Mangler\Renderer\Error)
+			if ($error instanceof \Acorn\Error)
 				$error->render();
 
 		$this->foot();

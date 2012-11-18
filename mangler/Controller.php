@@ -158,7 +158,7 @@ class Controller extends \Acorn\Controller
 		$exceptions = array();
 		while (null !== $ex)
 		{
-			$exceptions[] = new \Mangler\Renderer\Error($ex);
+			$exceptions[] = new \Acron\Error($ex);
 			$ex = $ex->getPrevious();
 		}
 
@@ -177,7 +177,7 @@ class Controller extends \Acorn\Controller
 			ob_end_clean();
 
 		$view = new \Mangler\View\Error(array(
-			new \Mangler\Renderer\Error($err)
+			new \Acorn\Error($err)
 		));
 		$view->render();
 
