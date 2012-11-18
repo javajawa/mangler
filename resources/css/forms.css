@@ -12,7 +12,6 @@ textarea
 	margin: 5px 0;
 	resize: vertical;
 	box-sizing: border-box;
-	-moz-box-sizing: border-box;
 }
 
 input, textarea

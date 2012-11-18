@@ -21,8 +21,9 @@ a:hover { text-decoration:underline; }
 .clear  { clear:both; }
 .inline { display: inline-block; margin: 0; padding: 0; }
 
-.spoiler { visibility: hidden; }
-.spoiler:hover { visibility: visible; }
-.spoiler::before { content: 'Spoiler - Hover to view'; font-style: italic; visibility: visible; }
-.spolier:hover::before { display: none; }
+.spoiler { color: blue; position: relative; }
+.spoiler:hover { color: red; }
+.spoiler:before { content: 'Spoiler - Hover to view'; font-style: italic; color: black; /*position: absolute; width: 100%;*/ }
+.spolier:hover:before { color: green; }
 
+#badges a { height: 32px; line-height: 32px; display: block; background-size: 88px 31px; background-repeat: no-repeat; padding-left: 95px; }
