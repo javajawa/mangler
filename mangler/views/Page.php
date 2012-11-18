@@ -5,18 +5,36 @@ use \Mangler\View;
 
 class Page extends View
 {
-	protected $text;
+	protected $fh   = null;
+	protected $text = null;
 
-	public function __construct($title, $text)
+	public function __construct($file, $title = null)
 	{
-		parent::__construct($title);
-		$this->text = $text;
+		if (file_exists($file))
+		{
+			$fh = fopen($file, 'rb');
+			parent::__construct(fgets($fh));
+			$this->fh = $fh;
+		}
+		else
+		{
+			parent::__construct($title);
+			$this->text = $file;
+		}
 	}
 
 	public function render()
 	{
 		$this->head();
-		echo $this->text;
+
+		if ($this->fh)
+		{
+			fpassthru($this->fh);
+			fclose($this->fh);
+		}
+		else
+			echo $this->text;
+
 		$this->foot();
 	}
 }

@@ -7,7 +7,8 @@ class Database
 
 	public static function connect()
 	{
-		self::$conn = new \Acorn\Database\Database('dbname=blog', '', '\Mangler\Entity');
+		if (null === self::$conn)
+			self::$conn = new \Acorn\Database\Database('dbname=blog', '', '\Mangler\Entity');
 	}
 
 	public static function __callStatic($name, $arguments)

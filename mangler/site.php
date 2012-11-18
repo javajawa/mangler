@@ -31,6 +31,7 @@ Routes::setNamespace('\\Mangler\\Controller');
 Routes::set404('/error/404');
 
 Routes::route('/error/?code', 'special', 'error');
+Routes::route('/sticky/?name', 'special', 'page');
 
 // Easter Eggs
 Routes::route('/coffee', 'special', 'error', array('code' => 418));

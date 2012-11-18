@@ -5,8 +5,8 @@ use \Mangler\Controller,
 	\Mangler\Time,
 	\Mangler\View\Login,
 	\Mangler\View\Page,
-	\Mangler\View\NotFound,
-	\Mangler\View\Teapot;
+	\Mangler\Database,
+	\Acorn\Acorn;
 
 /**
  * <p>Controller for actions which don't fit anywhere else (errors, index)</p>
@@ -32,13 +32,28 @@ class Special extends Controller
 			$code = 500;
 
 		$this->responseCode = $code;
-		$status = \Acorn\Acorn::HTTPStatusMessage($code);
-		switch ($code)
+		$status = Acorn::HTTPStatusMessage($code);
+		$file   = RESOURCE_PATH . 'pages/' . $code . '.html';
+
+		if (!file_exists($file))
+			$view = new Page("<h2>Error code {$code} - {$status}</h2>", $status);
+		else
+			$view = new Page($file);
+
+		$view->render();
+	}
+
+	public function page()
+	{
+		Database::connect();
+		if (isset($this->params->name) AND file_exists(RESOURCE_PATH . 'pages/' . $this->params->name . '.html'))
 		{
-			case 404: $view = new NotFound(); break;
-			case 418: $view = new Teapot(); break;
-			default:
-				$view = new Page($status, "<h2>Error code {$code} - {$status}</h2>");
+			$view = new Page(RESOURCE_PATH . 'pages/' . $this->params->name . '.html');
+		}
+		else
+		{
+			$this->responseCode = 404;
+			$view = new Page(RESOURCE_PATH . 'pages/404.html');
 		}
 		$view->render();
 	}
