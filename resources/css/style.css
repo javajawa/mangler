@@ -6,7 +6,8 @@ h1, h2, h3, h4, h5, h6 { font-family: Candara, Helvetica, sans-serif; font-weigh
 h2 { margin-top:10px; padding: 0 5px 3px 0; }
 h2 a       { color:#4C4C6C; }
 h2 a:hover { color:#2970A6; }
-h3, h4 { color:#080; margin: 0.5em 10px; font-size: 120%; }
+h3, h4 { color:#080; margin: 0.5em 10px; }
+h3 { font-size: 130%; }
 
 p { margin: 3px 0 10px 0; text-align: justify; }
 img { border:0; }

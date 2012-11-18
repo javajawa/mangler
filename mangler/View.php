@@ -59,7 +59,7 @@ abstract class View extends \Acorn\View
 			<h3>Search</h3>
 			<form id="searchbox" action="{$this->getUri('/search')}" method="get">
 				<input name="s" value="" placeholder="Blog search" />
-				<input type="image" src="{$this->getUri('/resources/img/searchbox.gif')}" alt="search" />
+				<input type="image" src="{$this->getUri('/resources/img/searchbox.png')}" alt="search" />
 			</form>
 
 			<h3>Feeds</h3>
@@ -71,6 +71,7 @@ abstract class View extends \Acorn\View
 
 			<h3>Other</h3>
 			<a id="cookies" href="{$this->getUri('/sticky/cookies')}">Cookie Policy</a>
+			<a id="theme" href="{$this->getUri('/sticky/theme')}">Theme Credits</a>
 		</div>
 
 EOF;
