@@ -1,3 +1,5 @@
+BEGIN;
+
 CREATE SCHEMA blog;
 
 CREATE PROCEDURAL LANGUAGE plpgsql;
@@ -152,16 +154,16 @@ CREATE VIEW "published_posts" AS
 				(count(*) - 1)
 			FROM
 				post AS comments
-			WHERE 
+			WHERE
 				comments.root = post.post_id
 			AND comments.status = 'published'::status
 		) AS commentcount
-	FROM 
+	FROM
 		"post" NATURAL JOIN "blob" NATURAL JOIN "user"
-	WHERE 
+	WHERE
 		"post".status = 'published'::status
 	AND "post".reply IS NULL
-	ORDER BY 
+	ORDER BY
 		"post"."timestamp" DESC
 ;
 
@@ -178,11 +180,11 @@ CREATE VIEW "all_comments" AS
 		"post".root,
 		"post".reply,
 		"post".status
-	FROM 
+	FROM
 		"post" NATURAL JOIN "blob" NATURAL JOIN "user"
-	WHERE 
+	WHERE
 		"post".reply IS NOT NULL
-	ORDER BY 
+	ORDER BY
 		"post".root,
 		"post".reply,
 		"post"."timestamp" DESC
@@ -199,7 +201,7 @@ CREATE VIEW "all_posts" AS
 		"user".handle AS "user",
 		"user".email,
 		"post".status
-	FROM 
+	FROM
 		"post" NATURAL JOIN "blob" NATURAL JOIN "user"
 	WHERE
 		"post".reply IS NULL
@@ -212,13 +214,13 @@ CREATE VIEW "all_tags" AS
 		"tags".tag,
 		"tags".tag_slug,
 		COUNT("post_tags".post_id) AS itemcount
-	FROM 
+	FROM
 		tags NATURAL JOIN post_tags
 	GROUP BY
 		tags.tag_id, tags.tag, tags.tag_slug
 ;
 
-SET search_path = public, pg_catalog;
+SET search_path = public, blog, pg_catalog;
 
 CREATE FUNCTION authenticate(handle text, password text) RETURNS blog."user"
 	LANGUAGE sql STABLE STRICT SECURITY DEFINER
@@ -248,7 +250,7 @@ CREATE FUNCTION "createPost"(aid integer) RETURNS integer
 CREATE FUNCTION "createPost"(handle character varying) RETURNS integer
 	LANGUAGE sql STRICT SECURITY DEFINER
 	AS $_$
-		SELECT "createPost"( 
+		SELECT "createPost"(
 			(SELECT user_id FROM "blog"."user" WHERE handle = $1)
 		);
 	$_$;
@@ -266,7 +268,7 @@ CREATE FUNCTION "createReply"(author integer, parent integer) RETURNS integer
 
 CREATE FUNCTION "createTag"(name text, slug text) RETURNS integer
 	LANGUAGE sql STRICT SECURITY DEFINER
-	AS $_$INSERT INTO "blog"."tags" (tag, slug) VALUES($1, $2) RETURNING tag_id;$_$;
+	AS $_$INSERT INTO "blog"."tags" (tag, tag_slug) VALUES($1, $2) RETURNING tag_id;$_$;
 
 CREATE FUNCTION "createUser"(handle text, email text, pass text) RETURNS integer
 	LANGUAGE sql SECURITY DEFINER
@@ -292,9 +294,9 @@ CREATE FUNCTION "getComments"(_post_id integer, stat blog.status) RETURNS SETOF 
 	LANGUAGE sql STABLE STRICT SECURITY DEFINER
 	AS $_$SELECT * FROM all_comments WHERE root = $1 AND status = $2 ORDER BY reply ASC, timestamp ASC;$_$;
 
-CREATE FUNCTION "getPost"(_post_id integer) RETURNS blog.all_posts
+CREATE FUNCTION "getPost"(_post_slug character varying) RETURNS blog.published_posts
 	LANGUAGE sql STABLE STRICT SECURITY DEFINER
-	AS $_$SELECT * FROM "blog"."all_posts" WHERE id = $1;$_$;
+	AS $_$SELECT * FROM "blog"."published_posts" WHERE slug = $1;$_$;
 
 CREATE FUNCTION "getPost"(_post_id integer) RETURNS blog.all_posts
 	LANGUAGE sql STABLE STRICT SECURITY DEFINER
@@ -430,14 +432,16 @@ CREATE FUNCTION "updatePost"(_post_id integer, _title text, _slug text, utime ti
 	$_$;
 
 -- Ownership of 'blog' schema
-ALTER SCHEMA blog        OWNER TO blog;
+ALTER DATABASE blog OWNER TO blog;
+ALTER SCHEMA public OWNER TO blog;
+ALTER SCHEMA blog   OWNER TO blog;
 
 ALTER TYPE   blog.status OWNER TO blog;
 
-ALTER FUNCTION blog."createBlob"   OWNER TO blog;
-ALTER FUNCTION blog."hashPassword" OWNER TO blog;
-ALTER FUNCTION blog."setRoot"      OWNER TO blog;
-ALTER FUNCTION blog."stripTags"    OWNER TO blog;
+ALTER FUNCTION blog."createBlob"()   OWNER TO blog;
+ALTER FUNCTION blog."hashPassword"(handle text, password text) OWNER TO blog;
+ALTER FUNCTION blog."setRoot"()      OWNER TO blog;
+ALTER FUNCTION blog."stripTags"(text)    OWNER TO blog;
 
 ALTER TABLE blog."user"    OWNER TO blog;
 ALTER TABLE blog."blob"    OWNER TO blog;
@@ -445,9 +449,9 @@ ALTER TABLE blog."post"    OWNER TO blog;
 ALTER TABLE blog."tags"    OWNER TO blog;
 ALTER TABLE blog.post_tags OWNER TO blog;
 
-ALTER TABLE blog.post_post_id_seq OWNER TO blog;
-ALTER TABLE blog.tags_tag_id_seq  OWNER TO blog;
-ALTER TABLE blog.user_user_id_seq OWNER TO blog;
+ALTER TABLE blog.post_id_seq OWNER TO blog;
+ALTER TABLE blog.tag_id_seq  OWNER TO blog;
+ALTER TABLE blog.user_id_seq OWNER TO blog;
 
 ALTER TABLE blog.all_comments     OWNER TO blog;
 ALTER TABLE blog.all_tags         OWNER TO blog;
@@ -506,3 +510,5 @@ GRANT EXECUTE ON FUNCTION public."setPassword"(handle text, password text) TO bl
 GRANT EXECUTE ON FUNCTION public."submitComment"(_post_id integer) TO blog;
 GRANT EXECUTE ON FUNCTION public."tagPost"(_post_id integer, _tags integer[]) TO blog;
 GRANT EXECUTE ON FUNCTION public."updatePost"(_post_id integer, _title text, _slug text, utime timestamp without time zone, _content text) TO blog;
+
+COMMIT;
