@@ -10,7 +10,7 @@ html
 body
 {
 	position: relative;
-	max-width: 140ex; min-height: 400px; min-width: 600px;
+	max-width: 140ex; min-height: 425px; min-width: 600px;
 	margin: 20px auto;
 	padding: 0 20px 0 200px;
 	box-sizing: border-box;

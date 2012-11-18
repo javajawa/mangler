@@ -22,17 +22,17 @@ class PostTeaser extends Renderer
 		// Generate the Teaser
 		$matches = array();
 		$teaser = '';
-		preg_match_all(':(<p>.+?</p>):', $this->post->content, $matches);
+		preg_match_all(':(<p>.+?</p>):smi', $this->post->content, $matches);
+		Footnotes::reset($this->post->slug);
 
 		foreach ($matches[0] as $para)
 		{
-			$teaser .= $para . PHP_EOL;
-			if (strlen($teaser) > 500)
+			$teaser .= TagParser::strip($para) . PHP_EOL;
+			if (strlen($teaser) > 300)
 				break;
 		}
-		Footnotes::reset($this->post->slug);
-		$teaser = TagParser::strip($teaser);
-		$teaser = wordwrap($teaser);
+		if (DEBUG)
+			$teaser = wordwrap($teaser);
 
 		// Build the tag list
 		$tags = array();
