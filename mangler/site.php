@@ -64,10 +64,10 @@ Routes::route('/resources/img/?file', 'resources', 'image');
 Routes::route('/feed', 'archive', 'rss');
 
 // Administration Panel
-Routes::route('/admin', 'admin', 'index');
-Routes::route('/admin/edit/?post', 'admin', 'edit');
-Routes::route('/admin/publish?post', 'admin', 'publish');
-Routes::route('/admin/create', 'admin', 'create');
+//Routes::route('/admin', 'admin', 'index');
+//Routes::route('/admin/edit/?post', 'admin', 'edit');
+//Routes::route('/admin/publish?post', 'admin', 'publish');
+//Routes::route('/admin/create', 'admin', 'create');
 
 // AJAX Requests
 Routes::route('/ajax/tracking', 'special', 'tracking');
