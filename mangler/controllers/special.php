@@ -46,6 +46,7 @@ class Special extends Controller
 	public function page()
 	{
 		Database::connect();
+		$this->track();
 		if (isset($this->params->name) AND file_exists(RESOURCE_PATH . 'pages/' . $this->params->name . '.html'))
 		{
 			$view = new Page(RESOURCE_PATH . 'pages/' . $this->params->name . '.html');

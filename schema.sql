@@ -139,6 +139,34 @@ ALTER TABLE ONLY "post_tags" ADD CONSTRAINT tag          FOREIGN KEY (tag_id)  R
 
 CREATE INDEX "tag-idx-tag-id" ON post_tags USING btree (tag_id);
 
+-- View tracking table
+BEGIN;
+
+SET search_path = blog, public;
+
+CREATE TABLE "tracking" (
+	sequence_id integer                NOT     NULL,
+	session_id  character(32)          NOT     NULL,
+	tracking_id character(64)          DEFAULT NULL,
+	access      timestamp              NOT     NULL,
+	unload      timestamp              DEFAULT NULL,
+	path        character varying(62)  NOT     NULL,
+	referer     character varying(256) NOT     NULL
+);
+
+ALTER TABLE ONLY "tracking" ADD CONSTRAINT tracking_pk PRIMARY KEY (sequence_id);
+ALTER TABLE ONLY "tracking" ADD CONSTRAINT author      FOREIGN KEY (user_id) REFERENCES "user"(user_id);
+
+CREATE INDEX "tracking-idx-sessions" ON "tracking" USING btree (tracking_id, session_id, access, unload);
+CREATE INDEX "tracking-idx-times"    ON "tracking" USING btree (access, unload);
+CREATE INDEX "tracking-idx-pages"    ON "tracking" USING btree (path, access, unload);
+-- TODO: Add index by referer hostname
+CREATE INDEX "tracking-idx-viewtime" ON "tracking" USING btree (extract(epoch from unload - access));
+
+CREATE SEQUENCE tracking_id_seq START WITH 1 INCREMENT BY 1 NO MAXVALUE NO MINVALUE CACHE 1;
+ALTER SEQUENCE  tracking_id_seq OWNED BY tracking.sequence_id;
+ALTER TABLE ONLY "tracking" ALTER COLUMN sequence_id SET DEFAULT nextval('tracking_id_seq'::regclass);
+
 -- Published Posts View
 CREATE VIEW "published_posts" AS
 	SELECT
@@ -229,6 +257,14 @@ CREATE FUNCTION authenticate(handle text, password text) RETURNS blog."user"
 			WHERE "handle" = $1
 			AND "pass" = "blog"."hashPassword"($1, $2)
 			LIMIT 1;
+	$_$;
+
+CREATE FUNCTION "beginTracking"(sid character, puri character, ruri character) RETURNS integer
+	LANGUAGE sql STABLE SECURITY DEFINER
+	AS $_$
+		INSERT INTO "blog"."tracking" (session_id, access, path, referer) VALUES ($1, NOW(), $2, $3);
+
+		SELECT LASTVAL()::integer;
 	$_$;
 
 CREATE FUNCTION "countArchives"() RETURNS bigint
@@ -443,15 +479,17 @@ ALTER FUNCTION blog."hashPassword"(handle text, password text) OWNER TO blog;
 ALTER FUNCTION blog."setRoot"()      OWNER TO blog;
 ALTER FUNCTION blog."stripTags"(text)    OWNER TO blog;
 
-ALTER TABLE blog."user"    OWNER TO blog;
-ALTER TABLE blog."blob"    OWNER TO blog;
-ALTER TABLE blog."post"    OWNER TO blog;
-ALTER TABLE blog."tags"    OWNER TO blog;
-ALTER TABLE blog.post_tags OWNER TO blog;
+ALTER TABLE blog."user"     OWNER TO blog;
+ALTER TABLE blog."blob"     OWNER TO blog;
+ALTER TABLE blog."post"     OWNER TO blog;
+ALTER TABLE blog."tags"     OWNER TO blog;
+ALTER TABLE blog.post_tags  OWNER TO blog;
+ALTER TABLE blog."tracking" OWNER TO blog;
 
-ALTER TABLE blog.post_id_seq OWNER TO blog;
-ALTER TABLE blog.tag_id_seq  OWNER TO blog;
-ALTER TABLE blog.user_id_seq OWNER TO blog;
+ALTER TABLE blog.post_id_seq      OWNER TO blog;
+ALTER TABLE blog.tag_id_seq       OWNER TO blog;
+ALTER TABLE blog.user_id_seq      OWNER TO blog;
+ALTER TABLE blog.tracking_id_seq  OWNER TO blog;
 
 ALTER TABLE blog.all_comments     OWNER TO blog;
 ALTER TABLE blog.all_tags         OWNER TO blog;
@@ -462,6 +500,7 @@ ALTER TABLE blog.published_posts  OWNER TO blog;
 ALTER SCHEMA public OWNER TO blog;
 
 ALTER FUNCTION public.authenticate(handle text, password text) OWNER TO blog;
+ALTER FUNCTION public."beginTracking"(sid character, puri character, ruri character) OWNER TO blog;
 ALTER FUNCTION public."countArchives"() OWNER TO blog;
 ALTER FUNCTION public."createPost"(aid integer) OWNER TO blog;
 ALTER FUNCTION public."createPost"(handle character varying) OWNER TO blog;
@@ -486,29 +525,30 @@ ALTER FUNCTION public."submitComment"(_post_id integer) OWNER TO blog;
 ALTER FUNCTION public."tagPost"(_post_id integer, _tags integer[]) OWNER TO blog;
 ALTER FUNCTION public."updatePost"(_post_id integer, _title text, _slug text, utime timestamp without time zone, _content text) OWNER TO blog;
 
-GRANT EXECUTE ON FUNCTION public.authenticate(handle text, password text) TO blog;
-GRANT EXECUTE ON FUNCTION public."countArchives"() TO blog;
-GRANT EXECUTE ON FUNCTION public."createPost"(aid integer) TO blog;
-GRANT EXECUTE ON FUNCTION public."createPost"(handle character varying) TO blog;
-GRANT EXECUTE ON FUNCTION public."createReply"(author integer, parent integer) TO blog;
-GRANT EXECUTE ON FUNCTION public."createTag"(name text, slug text) TO blog;
-GRANT EXECUTE ON FUNCTION public."createUser"(handle text, email text, pass text) TO blog;
-GRANT EXECUTE ON FUNCTION public."getArchives"(page integer) TO blog;
-GRANT EXECUTE ON FUNCTION public."getArchives"(tag_slug text, page integer) TO blog;
-GRANT EXECUTE ON FUNCTION public."getComments"(_post_id integer) TO blog;
-GRANT EXECUTE ON FUNCTION public."getComments"(_post_id integer, stat blog.status) TO blog;
-GRANT EXECUTE ON FUNCTION public."getPost"(_post_id integer) TO blog;
-GRANT EXECUTE ON FUNCTION public."getPost"(slug character varying) TO blog;
-GRANT EXECUTE ON FUNCTION public."getRoot"(_post_id integer) TO blog;
-GRANT EXECUTE ON FUNCTION public."getTag"(_tag character) TO blog;
-GRANT EXECUTE ON FUNCTION public."getTags"() TO blog;
-GRANT EXECUTE ON FUNCTION public."getTags"(_post_id integer) TO blog;
-GRANT EXECUTE ON FUNCTION public."getUser"(_handle character, _email character) TO blog;
-GRANT EXECUTE ON FUNCTION public."publishPost"(_post_id integer) TO blog;
-GRANT EXECUTE ON FUNCTION public."search"(keywords text, page integer) TO blog;
-GRANT EXECUTE ON FUNCTION public."setPassword"(handle text, password text) TO blog;
-GRANT EXECUTE ON FUNCTION public."submitComment"(_post_id integer) TO blog;
-GRANT EXECUTE ON FUNCTION public."tagPost"(_post_id integer, _tags integer[]) TO blog;
-GRANT EXECUTE ON FUNCTION public."updatePost"(_post_id integer, _title text, _slug text, utime timestamp without time zone, _content text) TO blog;
+GRANT EXECUTE ON FUNCTION public.authenticate(handle text, password text) TO "www-data";
+GRANT EXECUTE ON FUNCTION public."beginTracking"(sid character, puri character, ruri character) TO "www-data";
+GRANT EXECUTE ON FUNCTION public."countArchives"() TO "www-data";
+GRANT EXECUTE ON FUNCTION public."createPost"(aid integer) TO "www-data";
+GRANT EXECUTE ON FUNCTION public."createPost"(handle character varying) TO "www-data";
+GRANT EXECUTE ON FUNCTION public."createReply"(author integer, parent integer) TO "www-data";
+GRANT EXECUTE ON FUNCTION public."createTag"(name text, slug text) TO "www-data";
+GRANT EXECUTE ON FUNCTION public."createUser"(handle text, email text, pass text) TO "www-data";
+GRANT EXECUTE ON FUNCTION public."getArchives"(page integer) TO "www-data";
+GRANT EXECUTE ON FUNCTION public."getArchives"(tag_slug text, page integer) TO "www-data";
+GRANT EXECUTE ON FUNCTION public."getComments"(_post_id integer) TO "www-data";
+GRANT EXECUTE ON FUNCTION public."getComments"(_post_id integer, stat "www-data".status) TO "www-data";
+GRANT EXECUTE ON FUNCTION public."getPost"(_post_id integer) TO "www-data";
+GRANT EXECUTE ON FUNCTION public."getPost"(slug character varying) TO "www-data";
+GRANT EXECUTE ON FUNCTION public."getRoot"(_post_id integer) TO "www-data";
+GRANT EXECUTE ON FUNCTION public."getTag"(_tag character) TO "www-data";
+GRANT EXECUTE ON FUNCTION public."getTags"() TO "www-data";
+GRANT EXECUTE ON FUNCTION public."getTags"(_post_id integer) TO "www-data";
+GRANT EXECUTE ON FUNCTION public."getUser"(_handle character, _email character) TO "www-data";
+GRANT EXECUTE ON FUNCTION public."publishPost"(_post_id integer) TO "www-data";
+GRANT EXECUTE ON FUNCTION public."search"(keywords text, page integer) TO "www-data";
+GRANT EXECUTE ON FUNCTION public."setPassword"(handle text, password text) TO "www-data";
+GRANT EXECUTE ON FUNCTION public."submitComment"(_post_id integer) TO "www-data";
+GRANT EXECUTE ON FUNCTION public."tagPost"(_post_id integer, _tags integer[]) TO "www-data";
+GRANT EXECUTE ON FUNCTION public."updatePost"(_post_id integer, _title text, _slug text, utime timestamp without time zone, _content text) TO "www-data";
 
 COMMIT;

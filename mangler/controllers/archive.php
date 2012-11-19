@@ -17,6 +17,7 @@ class Archive extends Controller
 	public function after()
 	{
 		$this->eTag = true;
+		$this->track();
 		parent::after();
 	}
 

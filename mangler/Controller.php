@@ -188,4 +188,9 @@ class Controller extends \Acorn\Controller
 	{
 		return preg_replace('/[\n\t ][\n\t ]+/', ' ', $str);
 	}
+
+	protected function track()
+	{
+		return Database::beginTracking(array(session_id(), \Acorn\Request::url(), $_SERVER['HTTP_REFERER']))->singleton();
+	}
 }

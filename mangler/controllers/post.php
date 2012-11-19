@@ -24,6 +24,7 @@ class Post extends Controller
 	public function after()
 	{
 		$this->eTag = true;
+		$his->track();
 		parent::after();
 	}
 
