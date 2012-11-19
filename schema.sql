@@ -260,7 +260,7 @@ CREATE FUNCTION authenticate(handle text, password text) RETURNS blog."user"
 	$_$;
 
 CREATE FUNCTION "beginTracking"(sid character, puri character, ruri character) RETURNS integer
-	LANGUAGE sql STABLE SECURITY DEFINER
+	LANGUAGE sql VOLITILE SECURITY DEFINER
 	AS $_$
 		INSERT INTO "blog"."tracking" (session_id, access, path, referer) VALUES ($1, NOW(), $2, $3);
 
