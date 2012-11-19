@@ -47,11 +47,4 @@ class Archive extends Controller
 		$view->render();
 	}
 
-	public function rss()
-	{
-		$this->resetBuffer('application/rss+xml');
-		$posts = Database::getArchives(0);
-		$view  = new RSS($posts, Site::title, '/', '/resources/img/bug.png', Site::tagline);
-		$view->render();
-	}
 }

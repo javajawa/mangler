@@ -61,7 +61,7 @@ Routes::route('/resources/js',    'resources', 'script');
 Routes::route('/resources/img/?file', 'resources', 'image');
 
 // RSS Feed
-Routes::route('/feed', 'archive', 'rss');
+Routes::route('/feed', 'special', 'rss');
 
 // Administration Panel
 //Routes::route('/admin', 'admin', 'index');
