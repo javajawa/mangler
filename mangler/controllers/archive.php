@@ -3,8 +3,7 @@ namespace Mangler\Controller;
 
 use \Mangler\Controller,
 	\Mangler\Database,
-	\Mangler\Site,
-	\Mangler\View\RSS;
+	\Mangler\Site;
 
 class Archive extends Controller
 {

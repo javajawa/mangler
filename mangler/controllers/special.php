@@ -6,7 +6,9 @@ use \Mangler\Controller,
 	\Mangler\View\Login,
 	\Mangler\View\Page,
 	\Mangler\Database,
-	\Acorn\Acorn;
+	\Mangler\Site,
+	\Acorn\Acorn,
+	\Mangler\View\RSS;
 
 /**
  * <p>Controller for actions which don't fit anywhere else (errors, index)</p>
