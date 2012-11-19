@@ -60,13 +60,26 @@ class Post extends Comment implements Syndicatable
 		return sprintf('%s (%s)', $this->email, $this->user);
 	}
 
-	public function description($view)
+	public function description()
 	{
-		$p = new PostTeaser($this, $view);
-		return $p->render(0);
+		$matches = array();
+		$teaser = '';
+		preg_match_all(':(<p>.+?</p>):smi', $this->content, $matches);
+		Footnotes::reset($this->slug);
+
+		foreach ($matches[0] as $para)
+		{
+			$teaser .= TagParser::strip($para) . PHP_EOL;
+			if (strlen($teaser) > 300)
+				break;
+		}
+		if (DEBUG)
+			$teaser = wordwrap($teaser);
+
+		return $teaser;
 	}
 
-	public function content($view, $parse = true)
+	public function content($parse = true)
 	{
 		if (!$parse)
 			return $this->content;

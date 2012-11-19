@@ -24,6 +24,12 @@ class RSSItem extends Renderer
 		else
 			$description = $this->item->description($this->view);
 
+		$description = str_replace('href="/', 'href="http://' . $_SERVER['SERVER_NAME'] . '/', $description);
+
+		$tags = '';
+		foreach ($this->item->getTags() as $tag)
+			$tags .= "\t" . '<category>' . $tag->tag . '</category>' . PHP_EOL;
+
 		return <<<EOF
 <item>
 	<title><![CDATA[{$this->item->title()}]]></title>
@@ -35,7 +41,7 @@ class RSSItem extends Renderer
 		{$description}
 	]]>
 	</description>
-</item>
+{$tags}</item>
 
 EOF;
 	}

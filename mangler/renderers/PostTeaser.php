@@ -19,21 +19,6 @@ class PostTeaser extends Renderer
 
 	public function doRender()
 	{
-		// Generate the Teaser
-		$matches = array();
-		$teaser = '';
-		preg_match_all(':(<p>.+?</p>):smi', $this->post->content, $matches);
-		Footnotes::reset($this->post->slug);
-
-		foreach ($matches[0] as $para)
-		{
-			$teaser .= TagParser::strip($para) . PHP_EOL;
-			if (strlen($teaser) > 300)
-				break;
-		}
-		if (DEBUG)
-			$teaser = wordwrap($teaser);
-
 		// Build the tag list
 		$tags = array();
 		foreach ($this->post->getTags() as $tag)
@@ -42,7 +27,8 @@ class PostTeaser extends Renderer
 		$tags = implode(",\n\t\t\t", $tags);
 
 		// Get the link to the post
-		$link = Site::getUri($this->post);
+		$teaser      = $this->post->description();
+		$link        = Site::getUri($this->post);
 		$commentWord = (1 === (int)$this->post->commentcount ? 'Comment' : 'Comments');
 
 		return <<<EOF
