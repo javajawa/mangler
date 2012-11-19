@@ -1,6 +1,8 @@
 <?php
 namespace Mangler;
 
+use \Acorn\Request;
+
 /**
  * 	Controller
  * 	All controllers _must_ extend this badman.
@@ -158,7 +160,7 @@ class Controller extends \Acorn\Controller
 		$exceptions = array();
 		while (null !== $ex)
 		{
-			$exceptions[] = new \Acron\Error($ex);
+			$exceptions[] = new \Acorn\Error($ex);
 			$ex = $ex->getPrevious();
 		}
 
@@ -191,6 +193,10 @@ class Controller extends \Acorn\Controller
 
 	protected function track()
 	{
-		return Database::beginTracking(array(session_id(), \Acorn\Request::url(), $_SERVER['HTTP_REFERER']))->singleton();
+		return Database::beginTracking(array(
+			session_id(),
+			Request::url(),
+			Request::referer()
+		))->singleton();
 	}
 }
