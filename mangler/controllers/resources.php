@@ -78,6 +78,9 @@ class Resources extends Controller
 			return;
 		}
 
+		// TODO: detect image mime type
+		$this->setContentType('image/png');
+
 		$this->cachePublic = true;
 		$this->cacheTime   = 2551443;
 		$this->eTag = md5(`md5sum "{$file}"`);

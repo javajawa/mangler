@@ -80,7 +80,7 @@ class Controller extends \Acorn\Controller
 
 	public function after()
 	{
-		header('Content-type: ' . $this->contentType, true, $this->responseCode);
+		header('Content-type: ' . $this->contentType .'; charset=UTF-8', true, $this->responseCode);
 
 		// HTTP Cache-control
 		if (0 < $this->cacheTime)
@@ -184,6 +184,11 @@ class Controller extends \Acorn\Controller
 		$view->render();
 
 		exit;
+	}
+
+	public function setContentType($type)
+	{
+		$this->contentType = $type;
 	}
 
 	public function min($str)
