@@ -47,6 +47,9 @@ abstract class View extends \Acorn\View
 		<link href="http://fonts.googleapis.com/css?family=Marcellus+SC|Nunito:300" rel="stylesheet" type="text/css" />
 		<link rel="alternate" href="{$this->getUri('/feed')}" type="application/rss+xml" />
 		<link rel="icon" href="{$this->getUri('/resources/img/bug.png')}" type="image/png" />
+		<!--[if lt IE 9]>
+			<script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
 	</head>
 	<body>
 		&nbsp;
