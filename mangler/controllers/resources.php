@@ -78,8 +78,8 @@ class Resources extends Controller
 			return;
 		}
 
-		// TODO: detect image mime type
-		$this->setContentType('image/png');
+		$image = getimagesize($file);
+		$this->setContentType($image['mime']);
 
 		$this->cachePublic = true;
 		$this->cacheTime   = 2551443;
