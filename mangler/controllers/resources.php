@@ -17,7 +17,7 @@ class Resources extends Controller
 
 		$tag  = '';
 		foreach ($files as $file)
-			$tag .= `md5sum "{$file}"`;
+			$tag .= md5_file($file);
 
 		$this->eTag = md5($tag);
 		$this->cachePublic = true;
@@ -45,7 +45,7 @@ class Resources extends Controller
 
 		$tag  = '';
 		foreach ($files as $file)
-			$tag .= `md5sum "{$file}"`;
+			$tag .= md5_file($file);
 
 		$this->eTag = md5($tag);
 		$this->cachePublic = true;
@@ -83,7 +83,7 @@ class Resources extends Controller
 
 		$this->cachePublic = true;
 		$this->cacheTime   = 2551443;
-		$this->eTag = md5(`md5sum "{$file}"`);
+		$this->eTag = md5_file($file);
 		if ($this->ifMatch())
 			return;
 
