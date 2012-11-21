@@ -15,6 +15,22 @@ class Post extends Comment implements Syndicatable
 	protected $comments;
 	protected $tags;
 
+	public static function create($title, $content)
+	{
+		$post = new Post();
+		$post->slug = '';
+		$post->title = $title;
+		$post->content = $content;
+		$post->user = 'Preview';
+		$post->email = 'test@example.com';
+		$post->id = 0;
+		$post->tags = array();
+		$post->comments = array();
+		$post->commentcount = 0;
+
+		return $post;
+	}
+
 	public function __construct()
 	{
 		parent::__construct();

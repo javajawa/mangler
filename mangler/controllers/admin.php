@@ -3,6 +3,7 @@ namespace Mangler\Controller;
 
 use \Mangler\Controller,
 	\Mangler\Database,
+	\Mangler\Entity\Post,
 	\Mangler\Site,
 	\Mangler\View\AdminView
 	\Mangler\;
@@ -85,6 +86,33 @@ error:
 
 		$view = new AdminView();
 		$view->add(new EditPost($post));
+		$view->render();
+	}
+
+	public function preview()
+	{
+		$id = (int)$this->params->post;
+		if (empty($id))
+		{
+			if (empty($this->post->title) || empty($this->post->content))
+			{
+				$this->responseCode = 400; // Bad Request
+				return;
+			}
+			$post = Post::create($this->post->title, $this->post->content);
+		}
+		else
+		{
+			$post = Database::getPost($id);
+			if ($post === null)
+			{
+				$this->responseCode = 404; // Not Found
+				return;
+			}
+		}
+
+		$view = new AdminView();
+		$view->add(new \Mangler\Renderer\Post($post));
 		$view->render();
 	}
 

@@ -66,6 +66,7 @@ Routes::route('/feed', 'special', 'rss');
 // Administration Panel
 //Routes::route('/admin', 'admin', 'index');
 //Routes::route('/admin/edit/?post', 'admin', 'edit');
+//Routes::route('/admin/preview/?post', 'admin', 'preview');
 //Routes::route('/admin/publish?post', 'admin', 'publish');
 //Routes::route('/admin/create', 'admin', 'create');
 
