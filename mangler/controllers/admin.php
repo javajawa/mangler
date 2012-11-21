@@ -5,8 +5,8 @@ use \Mangler\Controller,
 	\Mangler\Database,
 	\Mangler\Entity\Post,
 	\Mangler\Site,
-	\Mangler\View\AdminView
-	\Mangler\;
+	\Mangler\View\AdminView,
+	\Mangler\Renderer\Table;
 
 class Admin extends Controller
 {
@@ -27,11 +27,12 @@ class Admin extends Controller
 		$posts = Database::getPosts();
 
 		$view = new AdminView();
-		$postlist = new PostList();
+		$postlist = new Table();
 
-		foreach ($post as $post)
+		foreach ($posts as $post)
 			$postlist->add(new PostInfo($post));
 
+		$view->add($postlist);
 		$view->render();
 	}
 
@@ -56,13 +57,16 @@ class Admin extends Controller
 			$this->redirect('/admin/edit/' . $newPost);
 		}
 		catch (DatabaseException $ex)
+		{
 			goto error;
+			(object)$ex;
+		}
 
 		if (null === $newPost)
 			goto error;
 
 error:
-		$_SESION['flash'] = 'An unexpected error occured when attempting to create the post';
+		$_SESSION['flash'] = 'An unexpected error occured when attempting to create the post';
 		$this->redirect('/admin', 303);
 	}
 
