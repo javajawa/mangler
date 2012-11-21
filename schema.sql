@@ -1,10 +1,27 @@
+
+CREATE DATABASE blog
+  WITH OWNER = blog
+       ENCODING = 'UTF8'
+       TABLESPACE = pg_default
+       LC_COLLATE = 'en_GB.UTF-8'
+       LC_CTYPE = 'en_GB.UTF-8'
+       CONNECTION LIMIT = -1;
+
+GRANT ALL ON DATABASE blog TO postgres;
+GRANT ALL ON DATABASE blog TO blog;
+
+CREATE PROCEDURAL LANGUAGE plpgsql;
+
 BEGIN;
 
 CREATE SCHEMA blog;
 
-CREATE PROCEDURAL LANGUAGE plpgsql;
-
 SET search_path = blog, pg_catalog;
+
+-- Digest function from postgres-contrib
+CREATE FUNCTION digest(text, text)  RETURNS bytea LANGUAGE c IMMUTABLE STRICT AS '$libdir/pgcrypto', 'pg_digest';
+CREATE FUNCTION digest(bytea, text) RETURNS bytea LANGUAGE c IMMUTABLE STRICT AS '$libdir/pgcrypto', 'pg_digest';
+
 
 CREATE TYPE status AS ENUM (
 	'draft',
@@ -12,10 +29,6 @@ CREATE TYPE status AS ENUM (
 	'spam',
 	'moderate'
 );
-
--- Digest function from postgres-contrib
-CREATE FUNCTION digest(text, text)  RETURNS bytea LANGUAGE c IMMUTABLE STRICT AS '$libdir/pgcrypto', 'pg_digest';
-CREATE FUNCTION digest(bytea, text) RETURNS bytea LANGUAGE c IMMUTABLE STRICT AS '$libdir/pgcrypto', 'pg_digest';
 
 -- Trigger for creating associated blobs for posts/comments
 CREATE FUNCTION "createBlob"() RETURNS trigger
@@ -140,10 +153,6 @@ ALTER TABLE ONLY "post_tags" ADD CONSTRAINT tag          FOREIGN KEY (tag_id)  R
 CREATE INDEX "tag-idx-tag-id" ON post_tags USING btree (tag_id);
 
 -- View tracking table
-BEGIN;
-
-SET search_path = blog, public;
-
 CREATE TABLE "tracking" (
 	sequence_id integer                NOT     NULL,
 	session_id  character(32)          NOT     NULL,
@@ -155,7 +164,6 @@ CREATE TABLE "tracking" (
 );
 
 ALTER TABLE ONLY "tracking" ADD CONSTRAINT tracking_pk PRIMARY KEY (sequence_id);
-ALTER TABLE ONLY "tracking" ADD CONSTRAINT author      FOREIGN KEY (user_id) REFERENCES "user"(user_id);
 
 CREATE INDEX "tracking-idx-sessions" ON "tracking" USING btree (tracking_id, session_id, access, unload);
 CREATE INDEX "tracking-idx-times"    ON "tracking" USING btree (access, unload);
@@ -260,7 +268,7 @@ CREATE FUNCTION authenticate(handle text, password text) RETURNS blog."user"
 	$_$;
 
 CREATE FUNCTION "beginTracking"(sid character, puri character, ruri character) RETURNS integer
-	LANGUAGE sql VOLITILE SECURITY DEFINER
+	LANGUAGE sql VOLATILE SECURITY DEFINER
 	AS $_$
 		INSERT INTO "blog"."tracking" (session_id, access, path, referer) VALUES ($1, NOW(), $2, $3);
 
