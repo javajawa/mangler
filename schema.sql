@@ -347,7 +347,7 @@ CREATE FUNCTION "getPost"(_post_id integer) RETURNS blog.all_posts
 	LANGUAGE sql STABLE STRICT SECURITY DEFINER
 	AS $_$SELECT * FROM "blog"."all_posts" WHERE id = $1;$_$;
 
-CREATE FUNCTION "getPosts"() RETURNS blog.all_posts
+CREATE FUNCTION "getPosts"() RETURNS SETOF blog.all_posts
 	LANGUAGE sql STABLE STRICT SECURITY DEFINER
 	AS $_$
 		SELECT * FROM "blog"."all_posts"
@@ -528,6 +528,7 @@ ALTER FUNCTION public."getComments"(_post_id integer) OWNER TO blog;
 ALTER FUNCTION public."getComments"(_post_id integer, stat blog.status) OWNER TO blog;
 ALTER FUNCTION public."getPost"(_post_id integer) OWNER TO blog;
 ALTER FUNCTION public."getPost"(slug character varying) OWNER TO blog;
+ALTER FUNCTION public."getPosts"() OWNER TO blog;
 ALTER FUNCTION public."getRoot"(_post_id integer) OWNER TO blog;
 ALTER FUNCTION public."getTag"(_tag character) OWNER TO blog;
 ALTER FUNCTION public."getTags"() OWNER TO blog;
@@ -554,6 +555,7 @@ GRANT EXECUTE ON FUNCTION public."getComments"(_post_id integer) TO "www-data";
 GRANT EXECUTE ON FUNCTION public."getComments"(_post_id integer, stat "www-data".status) TO "www-data";
 GRANT EXECUTE ON FUNCTION public."getPost"(_post_id integer) TO "www-data";
 GRANT EXECUTE ON FUNCTION public."getPost"(slug character varying) TO "www-data";
+GRANT EXECUTE ON FUNCTION public."getPosts"() TO "www-data";
 GRANT EXECUTE ON FUNCTION public."getRoot"(_post_id integer) TO "www-data";
 GRANT EXECUTE ON FUNCTION public."getTag"(_tag character) TO "www-data";
 GRANT EXECUTE ON FUNCTION public."getTags"() TO "www-data";
