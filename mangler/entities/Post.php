@@ -95,14 +95,10 @@ class Post extends Comment implements Syndicatable
 		return $teaser;
 	}
 
-	public function content($parse = true)
+	public function content()
 	{
-		if (!$parse)
-			return $this->content;
-
 		Footnotes::reset($this->slug);
 		return TagParser::parse($this->content . ' <lons />');
-		object($view);
 	}
 }
 
