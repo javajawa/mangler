@@ -1,7 +1,8 @@
 <?php
 namespace Mangler\View;
 
-use \Acorn\Renderer;
+use \Acorn\Renderer,
+	\Mangler\Site;
 
 class AdminView extends \Acorn\View
 {
@@ -15,16 +16,7 @@ class AdminView extends \Acorn\View
 
 	public function getUri($target)
 	{
-		if ($target instanceof \Acorn\Entity)
-			return Site::getUri($target);
-		else
-		{
-			$src = WWW_PATH;
-			if ('/' === substr($src, -1))
-				$src = substr($src, 0, strlen($src) - 1);
-
-			return 'http://' . $src . $target;
-		}
+		return Site::getUri($target);
 	}
 
 	public function getAvatarUri($email)
@@ -34,7 +26,7 @@ class AdminView extends \Acorn\View
 
 	protected function head()
 	{
-		$title = (null !== $this->title ? $this->title . ' « ' : '') . 'Admin « '. $this->blogTitle;
+		$title = (null !== $this->title ? $this->title . ' « ' : '') . 'Admin « '. Site::title;
 
 		echo <<<EOF
 <!DOCTYPE html>
@@ -50,13 +42,18 @@ class AdminView extends \Acorn\View
 	<body>
 		&nbsp;
 		<header>
-			<h1><a href="{$this->getUri('/')}">{$this->blogTitle}</a> &mdash; Admin</h1>
-			<div id="tagline">{$this->blogTagLine}</div>
+			<h1><a href="{$this->getUri('/')}">Blog</a> &mdash; Admin</h1>
 		</header>
 		<div id="sidebar">
 			<ul>
-				<li><a href="{$this->getUri('/admin')}">Admin Home</a>
+				<li><a href="{$this->getUri('/admin')}">Admin Home</a></li>
 			</ul>
+			<h3>Create Post</h3>
+			<form action="{$this->getUri('/admin/create')}" method="post">
+				<input name="title" placeholder="Post Title" />
+				<input name="slug" placeholder="post-slug" />
+				<input type="submit" value="Create" />
+			</form>
 		</div>
 
 EOF;

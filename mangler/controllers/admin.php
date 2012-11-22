@@ -3,10 +3,11 @@ namespace Mangler\Controller;
 
 use \Mangler\Controller,
 	\Mangler\Database,
-	\Mangler\Entity\Post,
+	\Acorn\Database\DatabaseException,
 	\Mangler\Site,
 	\Mangler\View\AdminView,
-	\Mangler\Renderer\Table;
+	\Mangler\Renderer\Table,
+	\Mangler\Renderer\PostInfo;
 
 class Admin extends Controller
 {
@@ -17,20 +18,15 @@ class Admin extends Controller
 		$this->eTag = false;
 	}
 
-	public function before()
-	{
-		// TODO: digest authentication
-	}
-
 	public function index()
 	{
 		$posts = Database::getPosts();
 
 		$view = new AdminView();
-		$postlist = new Table();
+		$postlist = new Table($view);
 
 		foreach ($posts as $post)
-			$postlist->add(new PostInfo($post));
+			$postlist->add(new PostInfo($post, $view));
 
 		$view->add($postlist);
 		$view->render();
@@ -43,16 +39,15 @@ class Admin extends Controller
 
 		try
 		{
-			$newPost = Database::createPost();
-			$newPost = $newPost->singleton();
+			$user    = $_SERVER['REDIRECT_REMOTE_USER'];
+			$user    = Database::getUser($user)->singleton();
+			if ($user === null)
+				die;
 
-			Database::updatePost(array(
-				$newPost,
-				$this->post->title,
-				$this->post->slug,
-				null,
-				''
-			));
+			$newPost = Database::createPost(array($user->handle));
+			$newPost = $newPost->singleton()->createPost;
+
+			Database::updatePost($newPost, '', $this->post->title, $this->post->slug);
 
 			$this->redirect('/admin/edit/' . $newPost);
 		}
@@ -76,20 +71,20 @@ error:
 			$this->redirect('/admin', 303);
 
 		if (isset($this->post->title))
-			Database::updatePost(array(
+			Database::updatePost(
 				(int)$this->params->post,
 				$this->post->title,
 				$this->post->slug,
 				$this->post->time,
 				$this->post->content
-			));
+			);
 
-		$post = Database::getPost((int)$this->params->post)->singleton();
+		$post = Database::getPost((int)$this->params->post);
 		if (null === $post)
 			$this->redirect('/admin', 303);
 
 		$view = new AdminView();
-		$view->add(new EditPost($post));
+		$view->add(new EditPost($post, $view));
 		$view->render();
 	}
 
@@ -116,14 +111,15 @@ error:
 		}
 
 		$view = new AdminView();
-		$view->add(new \Mangler\Renderer\Post($post));
+		$view->add(new \Mangler\Renderer\Post($post, $view));
 		$view->render();
 	}
 
 	public function publish()
 	{
-		Database::publishPost(array((int)$this->params->post));
-		$this->redriect('/admin/edit/' . $this->params->post);
+		Database::publishPost((int)$this->params->post);
+		$_SESSION['flash'] = 'This post has been published';
+		$this->redirect('/admin/edit/' . $this->params->post);
 	}
 }
 

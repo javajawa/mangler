@@ -64,11 +64,11 @@ Routes::route('/resources/img/?file', 'resources', 'image');
 Routes::route('/feed', 'special', 'rss');
 
 // Administration Panel
-//Routes::route('/admin', 'admin', 'index');
-//Routes::route('/admin/edit/?post', 'admin', 'edit');
-//Routes::route('/admin/preview/?post', 'admin', 'preview');
-//Routes::route('/admin/publish?post', 'admin', 'publish');
-//Routes::route('/admin/create', 'admin', 'create');
+Routes::route('/admin', 'admin', 'index');
+Routes::route('/admin/edit/?post', 'admin', 'edit');
+Routes::route('/admin/publish/?post', 'admin', 'publish');
+Routes::route('/admin/preview/?post', 'admin', 'preview');
+Routes::route('/admin/create', 'admin', 'create');
 
 // AJAX Requests
 Routes::route('/ajax/tracking', 'special', 'tracking');
@@ -83,9 +83,11 @@ class Site
 	const tagline = 'The Consciousness Stream Continues…';
 	const sessionCookie = 'blog';
 
-	public static function getUri(Entity $e)
+	public static function getUri($e)
 	{
-		if ($e instanceof \Mangler\Entity\Post)
+		if (is_string($e))
+			$stub = $e;
+		elseif ($e instanceof \Mangler\Entity\Post)
 			$stub = '/post/' . $e->slug;
 		elseif ($e instanceof \Mangler\Entity\Tag)
 			$stub = '/tag/' . $e->tag_slug;

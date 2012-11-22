@@ -3,7 +3,7 @@ namespace Mangler\Renderer;
 
 use \Acorn\Renderer,
 	\Mangler\Site,
-	\Mangler\View;
+	\Acorn\View;
 
 class Post extends Renderer
 {

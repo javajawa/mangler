@@ -46,10 +46,10 @@ class Database
 		)->singleton()->createReply;
 	}
 
-	public static function updatePost($id, $content, $title = '', $slug = null)
+	public static function updatePost($id, $content, $title = '', $slug = null, $timestamp = null)
 	{
 		return self::__callStatic('updatePost',
-			array(array($id, $title, $slug, null, $content))
+			array(array($id, $title, $slug, $timestamp, $content))
 		)->singleton()->updatePost;
 	}
 
@@ -81,6 +81,20 @@ class Database
 		$result = self::__callStatic('countArchives', array());
 		$result = $result->singleton();
 		return $result->countArchives;
+	}
+
+	public static function getPosts()
+	{
+		return self::__callStatic('getPosts', array(array(), 'Post'));
+	}
+
+	public static function getUser($handle, $email = null)
+	{
+		$args = array($handle);
+		if (false === empty($email))
+			$args []= $email;
+
+		return self::__callStatic('getUser', array($args, 'User'));
 	}
 }
 

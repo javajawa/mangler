@@ -1,5 +1,5 @@
 <?php
-namespace \Acorn\Table;
+namespace Mangler\Renderer;
 
 use \Acorn\Renderer;
 
@@ -23,30 +23,25 @@ class Table extends Renderer
 		$v = '<table>';
 		foreach ($this->entities as $entity)
 		{
+			$v .= "\t" . $entity->render() . PHP_EOL;
 		}
 		return $v . '</table>';
 	}
 }
 
-class Row extends Renderer
+abstract class Row extends Renderer
 {
-	protected $entities = array();
-	protected $fields;
+	protected $items = array();
 
 	public function __construct($view)
 	{
 		parent::__construct($view);
 	}
 
-	public function add(Row $e)
-	{
-		$this->entities []= $e;
-	}
-
 	protected function doRender()
 	{
-		$v .= '<tr>';
-		foreach ($entity as $field)
+		$v = '<tr>';
+		foreach ($this->items as $field)
 			$v .= '<td>' . $field . '</td>';
 		return $v . '</tr>';
 	}

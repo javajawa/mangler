@@ -372,6 +372,12 @@ CREATE FUNCTION "getTags"(_post_id integer) RETURNS SETOF blog.tags
 		WHERE post_id = $1;
 	$_$;
 
+CREATE FUNCTION "getUser"(_handle character) RETURNS blog."user"
+	LANGUAGE sql STABLE STRICT SECURITY DEFINER
+	AS $_$
+		SELECT * FROM "blog"."user" WHERE handle = $1 LIMIT 1;
+	$_$;
+
 CREATE FUNCTION "getUser"(_handle character, _email character) RETURNS blog."user"
 	LANGUAGE plpgsql STABLE STRICT SECURITY DEFINER
 	AS $_$
