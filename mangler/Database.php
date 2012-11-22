@@ -16,7 +16,7 @@ class Database
 		if (null === self::$conn)
 			self::connect();
 
-		return call_user_func_array(array(self::$conn, $name), $arguments);
+		return self::$conn->__call($name, $arguments);
 	}
 
 	public static function connected()
