@@ -74,10 +74,10 @@ error:
 		if (isset($this->post->title))
 			Database::updatePost(
 				(int)$this->params->post,
+				$this->post->content,
 				$this->post->title,
 				$this->post->slug,
-				$this->post->time,
-				$this->post->content
+				date('Y-m-d H:i:s', strtotime($this->post->time))
 			);
 
 		$post = Database::getPost((int)$this->params->post);
