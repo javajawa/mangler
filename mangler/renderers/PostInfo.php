@@ -12,6 +12,8 @@ class PostInfo extends Row
 	{
 		parent::__construct($view);
 		$this->items []= sprintf('<a href="%s">%s</a>', Site::getUri('/admin/edit/' . $post->id), $post->title);
-		$this->items []= sprintf('<a href="%s">PReview</a>', Site::getUri('/admin/preview/' . $post->id));
+		$this->items []= $post->timestamp;
+		$this->items []= sprintf('<a href="%s">Preview</a>', Site::getUri('/admin/preview/' . $post->id));
+		$this->items []= $post->status;
 	}
 }
