@@ -35,12 +35,15 @@ class Admin extends Controller
 
 	public function create()
 	{
+		if (array_key_exists('REDIRECT_REMOTE_USER', $_SERVER))
+			$_SERVER['REMOTE_USER'] = $_SERVER['REDIRECT_REMOTE_USER'];
+
 		if (empty($this->post->title) || empty($this->post->slug))
 			$this->redirect('/admin', 303);
 
 		try
 		{
-			$user    = $_SERVER['REDIRECT_REMOTE_USER'];
+			$user    = $_SERVER['REMOTE_USER'];
 			$user    = Database::getUser($user)->singleton();
 			if ($user === null)
 				die;

@@ -54,7 +54,7 @@ class Footnotes
 		else
 			$href = null;
 
-		$note = new Citation(self::$post, $num, $content, $href);
+		$note = new Citation(self::$slug, $num, $content, $href);
 		self::$citations[$num] = &$note;
 
 		if (array_key_exists('name', $atts))

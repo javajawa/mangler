@@ -199,6 +199,7 @@ CREATE VIEW "published_posts" AS
 	WHERE
 		"post".status = 'published'::status
 	AND "post".reply IS NULL
+	AND "post".timestamp <= NOW()
 	ORDER BY
 		"post"."timestamp" DESC
 ;
