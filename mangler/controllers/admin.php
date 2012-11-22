@@ -4,10 +4,11 @@ namespace Mangler\Controller;
 use \Mangler\Controller,
 	\Mangler\Database,
 	\Acorn\Database\DatabaseException,
-	\Mangler\Site,
-	\Mangler\View\AdminView,
+	\Mangler\Renderer\EditPost,
+	\Mangler\Renderer\PostInfo,
 	\Mangler\Renderer\Table,
-	\Mangler\Renderer\PostInfo;
+	\Mangler\Site,
+	\Mangler\View\AdminView;
 
 class Admin extends Controller
 {
@@ -47,7 +48,7 @@ class Admin extends Controller
 			$newPost = Database::createPost(array($user->handle));
 			$newPost = $newPost->singleton()->createPost;
 
-			Database::updatePost($newPost, '', $this->post->title, $this->post->slug);
+			Database::updatePost($newPost, $this->post->content, $this->post->title, $this->post->slug);
 
 			$this->redirect('/admin/edit/' . $newPost);
 		}

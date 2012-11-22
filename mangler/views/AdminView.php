@@ -52,6 +52,7 @@ class AdminView extends \Acorn\View
 			<form action="{$this->getUri('/admin/create')}" method="post">
 				<input name="title" placeholder="Post Title" />
 				<input name="slug" placeholder="post-slug" />
+				<textarea name="content" placeholder="Content"></textarea>
 				<input type="submit" value="Create" />
 			</form>
 		</div>
