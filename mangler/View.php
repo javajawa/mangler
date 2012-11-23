@@ -72,6 +72,7 @@ abstract class View extends \Acorn\View
 			</ul>
 
 			<h3>Other</h3>
+			<a id="about" href="{$this->getUri('/sticky/about')}">About The Blog</a>
 			<a id="cookies" href="{$this->getUri('/sticky/cookies')}">Cookie Policy</a>
 			<a id="theme" href="{$this->getUri('/sticky/theme')}">Theme Credits</a>
 		</div>
