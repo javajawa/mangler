@@ -164,7 +164,7 @@ class Citation extends Note
 		{
 			return sprintf(
 				'<a href="#%s" class="citation" id="%s" title="%s">%s</a>',
-				$this->getEntryId(), $return, strip_tags($this->content), $this->blankText
+				$this->getEntryId(), $return, strip_tags($this->content), self::$blankText
 			);
 		}
 		else
@@ -189,7 +189,7 @@ class Citation extends Note
 		$entry .= $this->content . PHP_EOL;
 
 		if ($this->href == null)
-			$entry .= $this->blankText . PHP_EOL;
+			$entry .= self::$blankText . PHP_EOL;
 		else
 			$entry .= '<a href="' . $this->href . '" target="_blank">' . $this->href . '</a>';
 
