@@ -1,7 +1,13 @@
 Licenses
 ========
 
-This project is dual-licensed under the "New BSD" License, and the GPL Version 2.
+This project is dual-licensed under the "New BSD" License, and the GPL Version 2,
+with an exception on files in resources/pages, which may only be re-published
+with the explicit consent of the upstream author.
+
+The use of the title 'Myself, Coding, Ranting, and Madness' and the tag line
+'The Consciousness Stream Continues' are also only available for use with the
+explicit permission of Ben Harcourt (javajawa).
 
 Throughout this document, The Contributors refers to the entities listed in the
 contributors file which should have been provided with this license.
