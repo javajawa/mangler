@@ -19,9 +19,9 @@ class EditPost extends Renderer
 	{
 		return <<<EOF
 <form method="post">
-	<input name="title" placeholder="Post Title" value="{$this->post->title}" />
-	<input name="slug"  placeholder="post slub"  value="{$this->post->slug}"  />
-	<input name="time"  placeholder="Publish"    value="{$this->post->timestamp}" />
+	Title: <input name="title" placeholder="Post Title" value="{$this->post->title}" />
+	Slug: <input name="slug"  placeholder="post slub"  value="{$this->post->slug}"  />
+	Publish: <input name="time"  placeholder="Publish"    value="{$this->post->timestamp}" />
 	<textarea name="content" placeholder="Content!" style="min-height: 400px;" />{$this->post->content}</textarea>
 	<input type="submit" value="Update" />
 </form>
