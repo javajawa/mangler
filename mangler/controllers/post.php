@@ -1,7 +1,8 @@
 <?php
 namespace Mangler\Controller;
 
-use \Mangler\Controller,
+use \Acorn\Database\DatabaseException,
+	\Mangler\Controller,
 	\Mangler\Time,
 	\Mangler\Site,
 	\Mangler\Database,
@@ -74,7 +75,16 @@ class Post extends Controller
 
 		if ($author->user_id === null)
 		{
-			$author = Database::createUser(array($handle, $email, null))->singleton();
+			try
+			{
+				$author = Database::createUser(array($handle, $email, null))->singleton();
+			}
+			catch (DatabaseException $ex)
+			{
+				$_SESSION['reply-flash'] = 'Username or email aready in use!<br />(Pick another, or a matched pair)';
+				return $this->redirect(Site::getUri($post) . '?reply=' . $parent . '#reply', 307);
+			}
+
 			$author->user_id = $author->createUser;
 		}
 
