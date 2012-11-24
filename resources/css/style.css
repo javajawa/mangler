@@ -19,7 +19,7 @@ a:hover { text-decoration:underline; }
 .right  { float:right; margin-left:10px; }
 .center { display: block; margin-right: auto; margin-left: auto; }
 .clear  { clear:both; }
-.inline { display: inline-block; margin: 0; padding: 0; }
+.inline { display: inline-block; margin: 0; padding: 0 5px; border-radius: 0; }
 
 .spoiler { color: blue; position: relative; }
 .spoiler:hover { color: red; }
