@@ -128,8 +128,8 @@ error:
 	public function publish()
 	{
 		Database::publishPost((int)$this->params->post);
-		$_SESSION['flash'] = 'This post has been published';
-		$this->redirect('/admin/edit/' . $this->params->post);
+		$_SESSION['flash'] = 'Post has been published';
+		$this->redirect($_SERVER['HTTP_REFERER']);
 	}
 }
 
