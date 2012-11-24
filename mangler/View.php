@@ -113,7 +113,8 @@ EOF;
 
 		$tags = '';
 		foreach (Database::getTags(array(), 'Tag') as $tag)
-			$tags .= "\n\t\t\t\t<li><a href=\"{$this->getUri($tag)}\">{$tag->tag} ({$tag->itemcount})</a></li>";
+			if ($tag->itemcount > 0)
+				$tags .= "\n\t\t\t\t<li><a href=\"{$this->getUri($tag)}\">{$tag->tag} ({$tag->itemcount})</a></li>";
 
 		return $tags;
 	}
