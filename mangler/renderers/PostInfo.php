@@ -31,6 +31,8 @@ class PostInfo extends Row
 				break;
 		}
 		$this->items []= sprintf('<a href="%s">Edit</a>', Site::getUri('/admin/edit/' . $post->id));
+		if ($post instanceof Post)
+			$this->items []= sprintf('<a href="%s">Tags</a>', Site::getUri('/admin/tag/' . $post->id));
 		$this->items []= sprintf('<a href="%s">Delete</a>',  Site::getUri('/admin/delete/'  . $post->id));
 	}
 }
