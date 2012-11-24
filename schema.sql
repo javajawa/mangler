@@ -1,5 +1,5 @@
 
-CREATE DATABASE blog
+CREATE OR REPLACE DATABASE blog
   WITH OWNER = blog
        ENCODING = 'UTF8'
        TABLESPACE = pg_default
@@ -10,20 +10,20 @@ CREATE DATABASE blog
 GRANT ALL ON DATABASE blog TO postgres;
 GRANT ALL ON DATABASE blog TO blog;
 
-CREATE PROCEDURAL LANGUAGE plpgsql;
+CREATE OR REPLACE PROCEDURAL LANGUAGE plpgsql;
 
 BEGIN;
 
-CREATE SCHEMA blog;
+CREATE OR REPLACE SCHEMA blog;
 
 SET search_path = blog, pg_catalog;
 
 -- Digest function from postgres-contrib
-CREATE FUNCTION digest(text, text)  RETURNS bytea LANGUAGE c IMMUTABLE STRICT AS '$libdir/pgcrypto', 'pg_digest';
-CREATE FUNCTION digest(bytea, text) RETURNS bytea LANGUAGE c IMMUTABLE STRICT AS '$libdir/pgcrypto', 'pg_digest';
+CREATE OR REPLACE FUNCTION digest(text, text)  RETURNS bytea LANGUAGE c IMMUTABLE STRICT AS '$libdir/pgcrypto', 'pg_digest';
+CREATE OR REPLACE FUNCTION digest(bytea, text) RETURNS bytea LANGUAGE c IMMUTABLE STRICT AS '$libdir/pgcrypto', 'pg_digest';
 
 
-CREATE TYPE status AS ENUM (
+CREATE OR REPLACE TYPE status AS ENUM (
 	'draft',
 	'published',
 	'spam',
@@ -31,7 +31,7 @@ CREATE TYPE status AS ENUM (
 );
 
 -- Trigger for creating associated blobs for posts/comments
-CREATE FUNCTION "createBlob"() RETURNS trigger
+CREATE OR REPLACE FUNCTION "CREATE OR REPLACEBlob"() RETURNS trigger
 	LANGUAGE plpgsql STRICT SECURITY DEFINER
 	AS $$BEGIN
 		INSERT INTO blob (post_id, post_data, search_data)
@@ -41,7 +41,7 @@ CREATE FUNCTION "createBlob"() RETURNS trigger
 	END;$$;
 
 -- Trigger for setting the root property correctly on root objects
-CREATE FUNCTION "setRoot"() RETURNS trigger
+CREATE OR REPLACE FUNCTION "setRoot"() RETURNS trigger
 	LANGUAGE plpgsql
 	AS $$BEGIN
 		IF new.root IS NULL THEN
@@ -52,19 +52,19 @@ CREATE FUNCTION "setRoot"() RETURNS trigger
 	END;$$;
 
 -- Password hashing function
-CREATE FUNCTION "hashPassword"(handle text, password text) RETURNS character
+CREATE OR REPLACE FUNCTION "hashPassword"(handle text, password text) RETURNS character
 	LANGUAGE sql IMMUTABLE STRICT
 	AS $_$SELECT encode(digest('v7qZYgtBXEt4vOraV4p++OrZFXSwiJn3uvz11X7Pj9GE/tMuIelN4lWSINujWHIIYPbKjB27ANcnv75sMbaCdw==' || $1 || $2 || 'mangle', 'sha512'), 'hex')$_$;
 
 -- Function for {x,ht}ml stripping tags from text
-CREATE FUNCTION "stripTags"(text) RETURNS text
+CREATE OR REPLACE FUNCTION "stripTags"(text) RETURNS text
 	LANGUAGE sql
 	AS $_$
 		SELECT regexp_replace(regexp_replace($1, E'(?x)<[^>]*?(\s alt \s* = \s* ([\'"]) ([^>]*?) \2) [^>]*? >', E'\3'), E'(?x)(< [^>]*? >)', '', 'g')
 	$_$;
 
 -- User Table
-CREATE TABLE "user" (
+CREATE OR REPLACE TABLE "user" (
 	user_id integer               NOT NULL,
 	handle  character varying(48) NOT NULL,
 	email   character varying(96) NOT NULL,
@@ -72,7 +72,7 @@ CREATE TABLE "user" (
 	perms   integer               NOT NULL DEFAULT 0
 );
 
-CREATE SEQUENCE user_id_seq START WITH 1 INCREMENT BY 1 NO MAXVALUE NO MINVALUE CACHE 1;
+CREATE OR REPLACE SEQUENCE user_id_seq START WITH 1 INCREMENT BY 1 NO MAXVALUE NO MINVALUE CACHE 1;
 ALTER SEQUENCE  user_id_seq OWNED BY "user".user_id;
 
 ALTER TABLE ONLY "user" ALTER COLUMN   user_id SET DEFAULT nextval('user_id_seq'::regclass);
@@ -80,10 +80,10 @@ ALTER TABLE ONLY "user" ADD CONSTRAINT user_pk PRIMARY KEY (user_id);
 ALTER TABLE ONLY "user" ADD CONSTRAINT email   UNIQUE (email);
 ALTER TABLE ONLY "user" ADD CONSTRAINT handle  UNIQUE (handle);
 
-CREATE INDEX "user-idx-perms" ON "user" USING btree (perms);
+CREATE OR REPLACE INDEX "user-idx-perms" ON "user" USING btree (perms);
 
 -- Post Table
-CREATE TABLE "post" (
+CREATE OR REPLACE TABLE "post" (
 	post_id     integer               NOT NULL,
 	"timestamp" timestamp             NOT NULL,
 	user_id     integer               NOT NULL,
@@ -94,7 +94,7 @@ CREATE TABLE "post" (
 	status      status                DEFAULT 'moderate'::status
 );
 
-CREATE SEQUENCE post_id_seq START WITH 1 INCREMENT BY 1 NO MAXVALUE NO MINVALUE CACHE 1;
+CREATE OR REPLACE SEQUENCE post_id_seq START WITH 1 INCREMENT BY 1 NO MAXVALUE NO MINVALUE CACHE 1;
 ALTER SEQUENCE  post_id_seq OWNED BY post.post_id;
 
 ALTER TABLE ONLY "post" ALTER COLUMN   post_id           SET DEFAULT nextval('post_id_seq'::regclass);
@@ -103,18 +103,18 @@ ALTER TABLE ONLY "post" ADD CONSTRAINT author            FOREIGN KEY (user_id) R
 ALTER TABLE ONLY "post" ADD CONSTRAINT "reply-reference" FOREIGN KEY (reply)   REFERENCES "post"(post_id);
 ALTER TABLE ONLY "post" ADD CONSTRAINT "root-reference"  FOREIGN KEY (root)    REFERENCES "post"(post_id);
 
-CREATE INDEX "post-idx-reply"     ON "post" USING btree (root, reply, "timestamp");
-CREATE INDEX "post-idx-slug"      ON "post" USING btree (slug);
-CREATE INDEX "post-idx-timestamp" ON "post" USING btree ("timestamp");
-CREATE INDEX "post-idx-title"     ON "post" USING btree (title);
-CREATE INDEX "post-idx-user"      ON "post" USING btree (user_id);
-CREATE UNIQUE INDEX "slug-check"  ON "post" USING btree (slug) WHERE (post_id = root);
+CREATE OR REPLACE INDEX "post-idx-reply"     ON "post" USING btree (root, reply, "timestamp");
+CREATE OR REPLACE INDEX "post-idx-slug"      ON "post" USING btree (slug);
+CREATE OR REPLACE INDEX "post-idx-timestamp" ON "post" USING btree ("timestamp");
+CREATE OR REPLACE INDEX "post-idx-title"     ON "post" USING btree (title);
+CREATE OR REPLACE INDEX "post-idx-user"      ON "post" USING btree (user_id);
+CREATE OR REPLACE UNIQUE INDEX "slug-check"  ON "post" USING btree (slug) WHERE (post_id = root);
 
-CREATE TRIGGER "create-post-blob" AFTER INSERT ON post FOR EACH ROW EXECUTE PROCEDURE "createBlob"();
-CREATE TRIGGER "set-post-root"   BEFORE INSERT ON post FOR EACH ROW EXECUTE PROCEDURE "setRoot"();
+CREATE OR REPLACE TRIGGER "CREATE OR REPLACE-post-blob" AFTER INSERT ON post FOR EACH ROW EXECUTE PROCEDURE "CREATE OR REPLACEBlob"();
+CREATE OR REPLACE TRIGGER "set-post-root"   BEFORE INSERT ON post FOR EACH ROW EXECUTE PROCEDURE "setRoot"();
 
 -- Tags
-CREATE TABLE "tags" (
+CREATE OR REPLACE TABLE "tags" (
 	tag_id   integer               NOT NULL,
 	tag      character varying(48) NOT NULL,
 	tag_slug character varying(32) NOT NULL
@@ -124,12 +124,12 @@ ALTER TABLE ONLY "tags" ADD CONSTRAINT tags_pk PRIMARY KEY (tag_id);
 ALTER TABLE ONLY "tags" ADD CONSTRAINT tag     UNIQUE (tag);
 ALTER TABLE ONLY "tags" ADD CONSTRAINT slug    UNIQUE (tag_slug);
 
-CREATE SEQUENCE tag_id_seq START WITH 1 INCREMENT BY 1 NO MAXVALUE NO MINVALUE CACHE 1;
+CREATE OR REPLACE SEQUENCE tag_id_seq START WITH 1 INCREMENT BY 1 NO MAXVALUE NO MINVALUE CACHE 1;
 ALTER SEQUENCE  tag_id_seq OWNED BY tags.tag_id;
 ALTER TABLE ONLY "tags" ALTER COLUMN tag_id SET DEFAULT nextval('tag_id_seq'::regclass);
 
 -- Post Blob Table
-CREATE TABLE "blob" (
+CREATE OR REPLACE TABLE "blob" (
 	post_id     integer  NOT NULL,
 	post_data   text,
 	search_data tsvector
@@ -138,10 +138,10 @@ CREATE TABLE "blob" (
 ALTER TABLE ONLY "blob" ADD CONSTRAINT  blob_pk   PRIMARY KEY (post_id);
 ALTER TABLE ONLY "blob" ADD CONSTRAINT "post-key" FOREIGN KEY (post_id) REFERENCES post(post_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
-CREATE INDEX search_index ON "blob" USING gin (search_data);
+CREATE OR REPLACE INDEX search_index ON "blob" USING gin (search_data);
 
 -- Post Tags Table
-CREATE TABLE "post_tags" (
+CREATE OR REPLACE TABLE "post_tags" (
 	post_id integer NOT NULL,
 	tag_id  integer NOT NULL
 );
@@ -150,10 +150,10 @@ ALTER TABLE ONLY "post_tags" ADD CONSTRAINT post_tags_pk PRIMARY KEY (post_id, t
 ALTER TABLE ONLY "post_tags" ADD CONSTRAINT post         FOREIGN KEY (post_id) REFERENCES post(post_id);
 ALTER TABLE ONLY "post_tags" ADD CONSTRAINT tag          FOREIGN KEY (tag_id)  REFERENCES tags(tag_id);
 
-CREATE INDEX "tag-idx-tag-id" ON post_tags USING btree (tag_id);
+CREATE OR REPLACE INDEX "tag-idx-tag-id" ON post_tags USING btree (tag_id);
 
 -- View tracking table
-CREATE TABLE "tracking" (
+CREATE OR REPLACE TABLE "tracking" (
 	sequence_id integer                NOT     NULL,
 	session_id  character(32)          NOT     NULL,
 	tracking_id character(64)          DEFAULT NULL,
@@ -165,18 +165,18 @@ CREATE TABLE "tracking" (
 
 ALTER TABLE ONLY "tracking" ADD CONSTRAINT tracking_pk PRIMARY KEY (sequence_id);
 
-CREATE INDEX "tracking-idx-sessions" ON "tracking" USING btree (tracking_id, session_id, access, unload);
-CREATE INDEX "tracking-idx-times"    ON "tracking" USING btree (access, unload);
-CREATE INDEX "tracking-idx-pages"    ON "tracking" USING btree (path, access, unload);
+CREATE OR REPLACE INDEX "tracking-idx-sessions" ON "tracking" USING btree (tracking_id, session_id, access, unload);
+CREATE OR REPLACE INDEX "tracking-idx-times"    ON "tracking" USING btree (access, unload);
+CREATE OR REPLACE INDEX "tracking-idx-pages"    ON "tracking" USING btree (path, access, unload);
 -- TODO: Add index by referer hostname
-CREATE INDEX "tracking-idx-viewtime" ON "tracking" USING btree (extract(epoch from unload - access));
+CREATE OR REPLACE INDEX "tracking-idx-viewtime" ON "tracking" USING btree (extract(epoch from unload - access));
 
-CREATE SEQUENCE tracking_id_seq START WITH 1 INCREMENT BY 1 NO MAXVALUE NO MINVALUE CACHE 1;
+CREATE OR REPLACE SEQUENCE tracking_id_seq START WITH 1 INCREMENT BY 1 NO MAXVALUE NO MINVALUE CACHE 1;
 ALTER SEQUENCE  tracking_id_seq OWNED BY tracking.sequence_id;
 ALTER TABLE ONLY "tracking" ALTER COLUMN sequence_id SET DEFAULT nextval('tracking_id_seq'::regclass);
 
 -- Published Posts View
-CREATE VIEW "published_posts" AS
+CREATE OR REPLACE VIEW "published_posts" AS
 	SELECT
 		"post".post_id AS id,
 		"post"."timestamp",
@@ -205,7 +205,7 @@ CREATE VIEW "published_posts" AS
 ;
 
 -- All Comments View
-CREATE VIEW "all_comments" AS
+CREATE OR REPLACE VIEW "all_comments" AS
 	SELECT
 		"comm".post_id AS id,
 		"comm"."timestamp",
@@ -229,7 +229,7 @@ CREATE VIEW "all_comments" AS
 ;
 
 -- All Posts View
-CREATE VIEW "all_posts" AS
+CREATE OR REPLACE VIEW "all_posts" AS
 	SELECT
 		"post".post_id AS id,
 		"post"."timestamp",
@@ -247,7 +247,7 @@ CREATE VIEW "all_posts" AS
 		"post"."timestamp" DESC;
 
 -- All Tags View
-CREATE VIEW "all_tags" AS
+CREATE OR REPLACE VIEW "all_tags" AS
 	SELECT
 		"tags".tag_id,
 		"tags".tag,
@@ -261,6 +261,7 @@ CREATE VIEW "all_tags" AS
 
 SET search_path = public, blog, pg_catalog;
 
+CREATE OR REPLACE FUNCTION "addTag"(_post integer, _tag integer) RETURNS void
 LANGUAGE plpgsql STRICT SECURITY DEFINER
 	AS $_$
 		BEGIN
@@ -270,9 +271,9 @@ LANGUAGE plpgsql STRICT SECURITY DEFINER
 				DELETE FROM "blog"."post_tags" WHERE post_id = $1 AND tag_id = $2;
 			END IF;
 		END;
-	$_$
+	$_$;
 
-CREATE FUNCTION authenticate(handle text, password text) RETURNS blog."user"
+CREATE OR REPLACE FUNCTION authenticate(handle text, password text) RETURNS blog."user"
 	LANGUAGE sql STABLE STRICT SECURITY DEFINER
 	AS $_$
 		SELECT * FROM "blog"."user"
@@ -281,7 +282,7 @@ CREATE FUNCTION authenticate(handle text, password text) RETURNS blog."user"
 			LIMIT 1;
 	$_$;
 
-CREATE FUNCTION "beginTracking"(sid character, puri character, ruri character) RETURNS integer
+CREATE OR REPLACE FUNCTION "beginTracking"(sid character, puri character, ruri character) RETURNS integer
 	LANGUAGE sql VOLATILE SECURITY DEFINER
 	AS $_$
 		INSERT INTO "blog"."tracking" (session_id, access, path, referer) VALUES ($1, NOW(), $2, $3);
@@ -289,13 +290,13 @@ CREATE FUNCTION "beginTracking"(sid character, puri character, ruri character) R
 		SELECT LASTVAL()::integer;
 	$_$;
 
-CREATE FUNCTION "countArchives"() RETURNS bigint
+CREATE OR REPLACE FUNCTION "countArchives"() RETURNS bigint
 	LANGUAGE sql STABLE SECURITY DEFINER
 	AS $_$
 		SELECT COUNT(*) FROM "blog"."published_posts"
 	$_$;
 
-CREATE FUNCTION "createPost"(aid integer) RETURNS integer
+CREATE OR REPLACE FUNCTION "CREATE OR REPLACEPost"(aid integer) RETURNS integer
 	LANGUAGE sql SECURITY DEFINER
 	AS $_$
 		INSERT INTO "blog"."post" (timestamp, user_id, status)
@@ -305,21 +306,21 @@ CREATE FUNCTION "createPost"(aid integer) RETURNS integer
 		SELECT LASTVAL()::integer;
 	$_$;
 
-CREATE FUNCTION "createPost"(handle character varying) RETURNS integer
+CREATE OR REPLACE FUNCTION "CREATE OR REPLACEPost"(handle character varying) RETURNS integer
 	LANGUAGE sql STRICT SECURITY DEFINER
 	AS $_$
-		SELECT "createPost"(
+		SELECT "CREATE OR REPLACEPost"(
 			(SELECT user_id FROM "blog"."user" WHERE handle = $1)
 		);
 	$_$;
 
-CREATE FUNCTION "deletePost"(_id int) RETURNS void
+CREATE OR REPLACE FUNCTION "deletePost"(_id int) RETURNS void
 	LANGUAGE sql STRICT SECURITY DEFINER
 	AS $_$
 		DELETE FROM "blog"."post" WHERE post_id = $1;
 	$_$;
 
-CREATE FUNCTION "createReply"(author integer, parent integer) RETURNS integer
+CREATE OR REPLACE FUNCTION "CREATE OR REPLACEReply"(author integer, parent integer) RETURNS integer
 	LANGUAGE sql STRICT SECURITY DEFINER
 	AS $_$
 		INSERT INTO "blog"."post" (timestamp, user_id, status, root, reply)
@@ -330,11 +331,11 @@ CREATE FUNCTION "createReply"(author integer, parent integer) RETURNS integer
 		SELECT LASTVAL()::integer AS id;
 	$_$;
 
-CREATE FUNCTION "createTag"(name text, slug text) RETURNS integer
+CREATE OR REPLACE FUNCTION "CREATE OR REPLACETag"(name text, slug text) RETURNS integer
 	LANGUAGE sql STRICT SECURITY DEFINER
 	AS $_$INSERT INTO "blog"."tags" (tag, tag_slug) VALUES($1, $2) RETURNING tag_id;$_$;
 
-CREATE FUNCTION "createUser"(handle text, email text, pass text) RETURNS integer
+CREATE OR REPLACE FUNCTION "CREATE OR REPLACEUser"(handle text, email text, pass text) RETURNS integer
 	LANGUAGE sql SECURITY DEFINER
 	AS $_$
 		INSERT INTO "blog"."user" (handle, email, pass)
@@ -343,57 +344,57 @@ CREATE FUNCTION "createUser"(handle text, email text, pass text) RETURNS integer
 		SELECT LASTVAL()::integer AS user_id;
 	$_$;
 
-CREATE FUNCTION "getArchives"(page integer) RETURNS SETOF blog.published_posts
+CREATE OR REPLACE FUNCTION "getArchives"(page integer) RETURNS SETOF blog.published_posts
 	LANGUAGE sql STABLE STRICT SECURITY DEFINER ROWS 10
 	AS $_$SELECT * FROM "blog"."published_posts" OFFSET (10 * $1) LIMIT 10;$_$;
 
-CREATE FUNCTION "getArchives"(tag_slug text, page integer) RETURNS SETOF blog.published_posts
+CREATE OR REPLACE FUNCTION "getArchives"(tag_slug text, page integer) RETURNS SETOF blog.published_posts
 	LANGUAGE sql STABLE STRICT SECURITY DEFINER COST 125 ROWS 10
 	AS $_$SELECT "blog"."published_posts".* FROM "blog"."published_posts" LEFT JOIN ("blog"."post_tags" NATURAL JOIN "blog"."tags") ON "blog"."published_posts".id = "blog"."post_tags".post_id WHERE "tag_slug" = $1 ORDER BY timestamp DESC OFFSET (10 * $2) LIMIT 10;$_$;
 
-CREATE FUNCTION "getComments"() RETURNS SETOF blog.all_comments
+CREATE OR REPLACE FUNCTION "getComments"() RETURNS SETOF blog.all_comments
 	LANGUAGE sql STABLE STRICT SECURITY DEFINER ROWS 100
 	AS $_$
 		SELECT * FROM all_comments ORDER BY status, timestamp DESC;
 	$_$;
 
-CREATE FUNCTION "getComments"(_post_id integer) RETURNS SETOF blog.all_comments
+CREATE OR REPLACE FUNCTION "getComments"(_post_id integer) RETURNS SETOF blog.all_comments
 	LANGUAGE sql STABLE STRICT SECURITY DEFINER ROWS 100
 	AS $_$SELECT * FROM all_comments WHERE root = $1;$_$;
 
-CREATE FUNCTION "getComments"(_post_id integer, stat blog.status) RETURNS SETOF blog.all_comments
+CREATE OR REPLACE FUNCTION "getComments"(_post_id integer, stat blog.status) RETURNS SETOF blog.all_comments
 	LANGUAGE sql STABLE STRICT SECURITY DEFINER
 	AS $_$SELECT * FROM all_comments WHERE root = $1 AND status = $2 ORDER BY reply ASC, timestamp ASC;$_$;
 
-CREATE FUNCTION "getPost"(_post_slug character varying) RETURNS blog.published_posts
+CREATE OR REPLACE FUNCTION "getPost"(_post_slug character varying) RETURNS blog.published_posts
 	LANGUAGE sql STABLE STRICT SECURITY DEFINER
 	AS $_$SELECT * FROM "blog"."published_posts" WHERE slug = $1;$_$;
 
-CREATE FUNCTION "getPost"(_post_id integer) RETURNS blog.all_posts
+CREATE OR REPLACE FUNCTION "getPost"(_post_id integer) RETURNS blog.all_posts
 	LANGUAGE sql STABLE STRICT SECURITY DEFINER
 	AS $_$SELECT * FROM "blog"."all_posts" WHERE id = $1;$_$;
 
-CREATE FUNCTION "getPosts"() RETURNS SETOF blog.all_posts
+CREATE OR REPLACE FUNCTION "getPosts"() RETURNS SETOF blog.all_posts
 	LANGUAGE sql STABLE STRICT SECURITY DEFINER
 	AS $_$
 		SELECT * FROM "blog"."all_posts"
 	$_$;
 
-CREATE FUNCTION "getRoot"(_post_id integer) RETURNS blog.all_posts
+CREATE OR REPLACE FUNCTION "getRoot"(_post_id integer) RETURNS blog.all_posts
 	LANGUAGE sql IMMUTABLE STRICT SECURITY DEFINER
 	AS $_$
 		SELECT * FROM blog.all_posts WHERE id = (SELECT root FROM post WHERE post_id = $1);
 	$_$;
 
-CREATE FUNCTION "getTag"(_tag character) RETURNS blog.all_tags
+CREATE OR REPLACE FUNCTION "getTag"(_tag character) RETURNS blog.all_tags
 	LANGUAGE sql STABLE STRICT SECURITY DEFINER
 	AS $_$SELECT * FROM "blog"."all_tags" WHERE tag_slug = $1;$_$;
 
-CREATE FUNCTION "getTags"() RETURNS SETOF blog.all_tags
+CREATE OR REPLACE FUNCTION "getTags"() RETURNS SETOF blog.all_tags
 	LANGUAGE sql STABLE SECURITY DEFINER
 	AS $$SELECT * FROM all_tags;$$;
 
-CREATE FUNCTION "getTags"(_post_id integer) RETURNS SETOF blog.tags
+CREATE OR REPLACE FUNCTION "getTags"(_post_id integer) RETURNS SETOF blog.tags
 	LANGUAGE sql STABLE STRICT SECURITY DEFINER
 	AS $_$
 		SELECT "blog"."tags".*
@@ -401,13 +402,13 @@ CREATE FUNCTION "getTags"(_post_id integer) RETURNS SETOF blog.tags
 		WHERE post_id = $1;
 	$_$;
 
-CREATE FUNCTION "getUser"(_handle character) RETURNS blog."user"
+CREATE OR REPLACE FUNCTION "getUser"(_handle character) RETURNS blog."user"
 	LANGUAGE sql STABLE STRICT SECURITY DEFINER
 	AS $_$
 		SELECT * FROM "blog"."user" WHERE handle = $1 LIMIT 1;
 	$_$;
 
-CREATE FUNCTION "getUser"(_handle character, _email character) RETURNS blog."user"
+CREATE OR REPLACE FUNCTION "getUser"(_handle character, _email character) RETURNS blog."user"
 	LANGUAGE plpgsql STABLE STRICT SECURITY DEFINER
 	AS $_$
 		DECLARE
@@ -421,14 +422,14 @@ CREATE FUNCTION "getUser"(_handle character, _email character) RETURNS blog."use
 		END;
 	$_$;
 
-CREATE FUNCTION "publishPost"(_post_id integer) RETURNS integer
+CREATE OR REPLACE FUNCTION "publishPost"(_post_id integer) RETURNS integer
 	LANGUAGE sql STRICT SECURITY DEFINER
 	AS $_$
 		UPDATE "blog"."post" SET status = 'published'::status WHERE post_id = $1;
 		SELECT root FROM "blog"."post" WHERE post_id = $1;
 	$_$;
 
-CREATE FUNCTION "search"(keywords text, page integer) RETURNS SETOF blog.published_posts
+CREATE OR REPLACE FUNCTION "search"(keywords text, page integer) RETURNS SETOF blog.published_posts
 	LANGUAGE sql STABLE STRICT SECURITY DEFINER COST 150 ROWS 10
 	AS $_$
 		SELECT
@@ -445,19 +446,19 @@ CREATE FUNCTION "search"(keywords text, page integer) RETURNS SETOF blog.publish
 		LIMIT 10;
 	$_$;
 
-CREATE FUNCTION "setPassword"(handle text, password text) RETURNS void
+CREATE OR REPLACE FUNCTION "setPassword"(handle text, password text) RETURNS void
 	LANGUAGE sql STRICT SECURITY DEFINER
 	AS $_$
 		UPDATE "blog"."user" SET pass = "blog"."hashPassword"($1, $2) WHERE handle = $1;
 	$_$;
 
-CREATE FUNCTION "submitComment"(_post_id integer) RETURNS void
+CREATE OR REPLACE FUNCTION "submitComment"(_post_id integer) RETURNS void
 	LANGUAGE sql STRICT SECURITY DEFINER
 	AS $_$
 		UPDATE "blog"."post" SET status = 'moderate'::status WHERE post_id = $1;
 	$_$;
 
-CREATE FUNCTION "tagPost"(_post_id integer, _tags integer[]) RETURNS void
+CREATE OR REPLACE FUNCTION "tagPost"(_post_id integer, _tags integer[]) RETURNS void
 	LANGUAGE plpgsql STRICT SECURITY DEFINER
 	AS $_$
 		DECLARE
@@ -471,7 +472,7 @@ CREATE FUNCTION "tagPost"(_post_id integer, _tags integer[]) RETURNS void
 		END;
 	$_$;
 
-CREATE FUNCTION "updatePost"(_post_id integer, _title text, _slug text, utime timestamp without time zone, _content text) RETURNS timestamp without time zone
+CREATE OR REPLACE FUNCTION "updatePost"(_post_id integer, _title text, _slug text, utime timestamp without time zone, _content text) RETURNS timestamp without time zone
 	LANGUAGE plpgsql SECURITY DEFINER
 	AS $_$
 		DECLARE
@@ -517,7 +518,7 @@ ALTER SCHEMA blog   OWNER TO blog;
 
 ALTER TYPE   blog.status OWNER TO blog;
 
-ALTER FUNCTION blog."createBlob"()   OWNER TO blog;
+ALTER FUNCTION blog."CREATE OR REPLACEBlob"()   OWNER TO blog;
 ALTER FUNCTION blog."hashPassword"(handle text, password text) OWNER TO blog;
 ALTER FUNCTION blog."setRoot"()      OWNER TO blog;
 ALTER FUNCTION blog."stripTags"(text)    OWNER TO blog;
@@ -545,11 +546,11 @@ ALTER SCHEMA public OWNER TO blog;
 ALTER FUNCTION public.authenticate(handle text, password text) OWNER TO blog;
 ALTER FUNCTION public."beginTracking"(sid character, puri character, ruri character) OWNER TO blog;
 ALTER FUNCTION public."countArchives"() OWNER TO blog;
-ALTER FUNCTION public."createPost"(aid integer) OWNER TO blog;
-ALTER FUNCTION public."createPost"(handle character varying) OWNER TO blog;
-ALTER FUNCTION public."createReply"(author integer, parent integer) OWNER TO blog;
-ALTER FUNCTION public."createTag"(name text, slug text) OWNER TO blog;
-ALTER FUNCTION public."createUser"(handle text, email text, pass text) OWNER TO blog;
+ALTER FUNCTION public."CREATE OR REPLACEPost"(aid integer) OWNER TO blog;
+ALTER FUNCTION public."CREATE OR REPLACEPost"(handle character varying) OWNER TO blog;
+ALTER FUNCTION public."CREATE OR REPLACEReply"(author integer, parent integer) OWNER TO blog;
+ALTER FUNCTION public."CREATE OR REPLACETag"(name text, slug text) OWNER TO blog;
+ALTER FUNCTION public."CREATE OR REPLACEUser"(handle text, email text, pass text) OWNER TO blog;
 ALTER FUNCTION public."getArchives"(page integer) OWNER TO blog;
 ALTER FUNCTION public."getArchives"(tag_slug text, page integer) OWNER TO blog;
 ALTER FUNCTION public."getComments"(_post_id integer) OWNER TO blog;
@@ -572,11 +573,11 @@ ALTER FUNCTION public."updatePost"(_post_id integer, _title text, _slug text, ut
 GRANT EXECUTE ON FUNCTION public.authenticate(handle text, password text) TO "www-data";
 GRANT EXECUTE ON FUNCTION public."beginTracking"(sid character, puri character, ruri character) TO "www-data";
 GRANT EXECUTE ON FUNCTION public."countArchives"() TO "www-data";
-GRANT EXECUTE ON FUNCTION public."createPost"(aid integer) TO "www-data";
-GRANT EXECUTE ON FUNCTION public."createPost"(handle character varying) TO "www-data";
-GRANT EXECUTE ON FUNCTION public."createReply"(author integer, parent integer) TO "www-data";
-GRANT EXECUTE ON FUNCTION public."createTag"(name text, slug text) TO "www-data";
-GRANT EXECUTE ON FUNCTION public."createUser"(handle text, email text, pass text) TO "www-data";
+GRANT EXECUTE ON FUNCTION public."CREATE OR REPLACEPost"(aid integer) TO "www-data";
+GRANT EXECUTE ON FUNCTION public."CREATE OR REPLACEPost"(handle character varying) TO "www-data";
+GRANT EXECUTE ON FUNCTION public."CREATE OR REPLACEReply"(author integer, parent integer) TO "www-data";
+GRANT EXECUTE ON FUNCTION public."CREATE OR REPLACETag"(name text, slug text) TO "www-data";
+GRANT EXECUTE ON FUNCTION public."CREATE OR REPLACEUser"(handle text, email text, pass text) TO "www-data";
 GRANT EXECUTE ON FUNCTION public."getArchives"(page integer) TO "www-data";
 GRANT EXECUTE ON FUNCTION public."getArchives"(tag_slug text, page integer) TO "www-data";
 GRANT EXECUTE ON FUNCTION public."getComments"(_post_id integer) TO "www-data";
