@@ -140,6 +140,11 @@ error:
 		$this->redirect($_SERVER['HTTP_REFERER']);
 	}
 
+	public function tag()
+	{
+
+	}
+
 	public function delete()
 	{
 		$id = $this->params->post;

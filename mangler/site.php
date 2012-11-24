@@ -70,6 +70,7 @@ Routes::route('/admin/publish/?post', 'admin', 'publish');
 Routes::route('/admin/preview/?post', 'admin', 'preview');
 Routes::route('/admin/create', 'admin', 'create');
 Routes::route('/admin/delete/?post', 'admin', 'delete');
+Routes::route('/admin/tag/?post', 'admin', 'tag');
 
 // AJAX Requests
 Routes::route('/ajax/tracking', 'special', 'tracking');
