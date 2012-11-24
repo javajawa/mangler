@@ -249,12 +249,15 @@ CREATE OR REPLACE VIEW "all_posts" AS
 -- All Tags View
 CREATE OR REPLACE VIEW "all_tags" AS
 	SELECT
-		"tags".tag_id,
 		"tags".tag,
 		"tags".tag_slug,
-		COUNT("post_tags".post_id) AS itemcount
+		COUNT(post_id) AS itemcount,
+		"tags".tag_id
 	FROM
-		tags NATURAL LEFT JOIN post_tags
+		tags NATURAL LEFT JOIN (post_tags NATURAL JOIN post)
+	WHERE
+		post.status = 'published'::status
+	AND post.timestamp <= NOW()
 	GROUP BY
 		tags.tag_id, tags.tag, tags.tag_slug
 ;
