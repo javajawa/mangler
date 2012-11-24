@@ -63,6 +63,14 @@ class Database
 		while (false !== pg_get_result($this->instance));
 	}
 
+	/**
+	 *
+	 * @param type $procedure
+	 * @param array $params
+	 * @param string $entityClass
+	 * @return \Acorn\Database\Result
+	 * @throws DatabaseException
+	 */
 	public function storedProcedure($procedure, array $params = array(), $entityClass = null)
 	{
 		// Create the statement

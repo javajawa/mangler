@@ -360,9 +360,9 @@ CREATE FUNCTION "getPosts"() RETURNS SETOF blog.all_posts
 	$_$;
 
 CREATE FUNCTION "getRoot"(_post_id integer) RETURNS blog.all_posts
-	LANGUAGE sql IMMUTABLE STRICT
+	LANGUAGE sql IMMUTABLE STRICT SECURITY DEFINER
 	AS $_$
-		SELECT * FROM blog."all_posts" WHERE id = (SELECT root FROM post WHERE post_id = $1);
+		SELECT * FROM blog.all_posts WHERE id = (SELECT root FROM post WHERE post_id = $1);
 	$_$;
 
 CREATE FUNCTION "getTag"(_tag character) RETURNS blog.all_tags

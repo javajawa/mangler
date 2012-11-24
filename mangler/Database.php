@@ -54,9 +54,14 @@ class Database
 		)->singleton()->updatePost;
 	}
 
+	public static function submitComment($id)
+	{
+		return self::$conn->storedProcedure('submitComment', array($id))->singleton();
+	}
+
 	public static function publishPost($id)
 	{
-		return self::$conn->storedProcedure('publishPost', array($id), 'Post')->singleton();
+		return self::$conn->storedProcedure('publishPost', array($id))->singleton();
 	}
 
 	public static function deletePost($id)
@@ -90,13 +95,18 @@ class Database
 		return self::$conn->storedProcedure('getPosts', array(), 'Post');
 	}
 
+	public static function getComments()
+	{
+		return self::$conn->storedProcedure('getComments', array(), 'Comment');
+	}
+
 	public static function getUser($handle, $email = null)
 	{
 		$args = array($handle);
 		if (false === empty($email))
 			$args []= $email;
 
-		return self::__callStatic('getUser', array($args, 'User'));
+		return self::$conn->storedProcedure('getUser', $args, 'User')->singleton();
 	}
 
 

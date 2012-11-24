@@ -48,7 +48,7 @@ class Admin extends Controller
 		try
 		{
 			$user    = $_SERVER['REMOTE_USER'];
-			$user    = Database::getUser($user)->singleton();
+			$user    = Database::getUser($user);
 			if ($user === null)
 				die;
 

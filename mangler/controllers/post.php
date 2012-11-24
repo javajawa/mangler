@@ -64,19 +64,24 @@ class Post extends Controller
 		$handle  = $this->postData('handle');
 		$email   = $this->postData('email');
 
-
 		if (false === isset($content, $handle, $email))
 		{
 			$_SESSION['reply-flash'] = 'All fields are required';
 			return $this->redirect(Site::getUri($post) . '?reply=' . $parent . '#reply', 307);
 		}
 
-		$_SESSION['reply-flash'] = 'Commenting is currently disabled';
-		return $this->redirect(Site::getUri($post) . '?reply=' . $parent . '#reply', 307);
+		$author = Database::getUser($handle, $email);
 
-		$reply = Database::createReply(null, $parent);
+		if ($author->user_id === null)
+		{
+			$_SESSION['reply-flash'] = 'Not a user account';
+			return $this->redirect(Site::getUri($post) . '?reply=' . $parent . '#reply', 307);
+		}
+
+		$reply = Database::createReply($author->user_id, $parent);
 
 		Database::updatePost($reply, $content);
+		Database::submitComment($reply);
 
 		$this->redirect(Site::getUri($post), 303);
 	}
