@@ -207,24 +207,25 @@ CREATE VIEW "published_posts" AS
 -- All Comments View
 CREATE VIEW "all_comments" AS
 	SELECT
-		"post".post_id AS id,
-		"post"."timestamp",
-		"post".title,
-		"post".slug,
+		"comm".post_id AS id,
+		"comm"."timestamp",
+		"item".title,
+		"item".slug,
 		"blob".post_data AS content,
 		"user".handle AS "user",
 		"user".email,
-		"post".root,
-		"post".reply,
-		"post".status
+		"comm".root,
+		"comm".reply,
+		"comm".status
 	FROM
-		"post" NATURAL JOIN "blob" NATURAL JOIN "user"
+		"post" "comm" NATURAL JOIN "blob" NATURAL JOIN "user"
+		LEFT JOIN "post" "item" ON "comm".root = "item".post_id
 	WHERE
-		"post".reply IS NOT NULL
+		"comm".reply IS NOT NULL
 	ORDER BY
-		"post".root,
-		"post".reply,
-		"post"."timestamp" DESC
+		"comm".root,
+		"comm".reply,
+		"comm"."timestamp" DESC
 ;
 
 -- All Posts View
@@ -323,11 +324,12 @@ CREATE FUNCTION "createTag"(name text, slug text) RETURNS integer
 
 CREATE FUNCTION "createUser"(handle text, email text, pass text) RETURNS integer
 	LANGUAGE sql SECURITY DEFINER
-	AS $_$INSERT INTO "blog"."user" (handle, email, pass)
+	AS $_$
+		INSERT INTO "blog"."user" (handle, email, pass)
+			VALUES ($1, $2, "blog"."hashPassword"($1 || $2, $3));
 
-VALUES ($1, $2, "blog"."hashPassword"($1 || $2, $3));
-
-SELECT LASTVAL()::integer;$_$;
+		SELECT LASTVAL()::integer AS user_id;
+	$_$;
 
 CREATE FUNCTION "getArchives"(page integer) RETURNS SETOF blog.published_posts
 	LANGUAGE sql STABLE STRICT SECURITY DEFINER ROWS 10

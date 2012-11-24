@@ -95,9 +95,9 @@ class Database
 		return self::$conn->storedProcedure('getPosts', array(), 'Post');
 	}
 
-	public static function getComments()
+	public static function getComments($params = array())
 	{
-		return self::$conn->storedProcedure('getComments', array(), 'Comment');
+		return self::$conn->storedProcedure('getComments', $params, 'Comment');
 	}
 
 	public static function getUser($handle, $email = null)

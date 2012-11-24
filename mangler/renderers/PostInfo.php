@@ -3,6 +3,7 @@ namespace Mangler\Renderer;
 
 use \Mangler\Site,
 	\Mangler\Entity\Comment,
+	\Mangler\Entity\Post,
 	\Mangler\Renderer\Row,
 	\Acorn\View;
 

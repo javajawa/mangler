@@ -74,8 +74,8 @@ class Post extends Controller
 
 		if ($author->user_id === null)
 		{
-			$_SESSION['reply-flash'] = 'Not a user account';
-			return $this->redirect(Site::getUri($post) . '?reply=' . $parent . '#reply', 307);
+			$author = Database::createUser(array($handle, $email, null))->singleton();
+			$author->user_id = $author->createUser;
 		}
 
 		$reply = Database::createReply($author->user_id, $parent);
@@ -83,7 +83,8 @@ class Post extends Controller
 		Database::updatePost($reply, $content);
 		Database::submitComment($reply);
 
-		$this->redirect(Site::getUri($post), 303);
+		$_SESSION['reply-flash'] = 'Your comment has been submitted';
+		$this->redirect(Site::getUri($post).'#reply', 303);
 	}
 
 	private function postData($key)
