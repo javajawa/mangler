@@ -69,6 +69,7 @@ Routes::route('/admin/edit/?post', 'admin', 'edit');
 Routes::route('/admin/publish/?post', 'admin', 'publish');
 Routes::route('/admin/preview/?post', 'admin', 'preview');
 Routes::route('/admin/create', 'admin', 'create');
+Routes::route('/admin/delete/?post', 'admin', 'delete');
 
 // AJAX Requests
 Routes::route('/ajax/tracking', 'special', 'tracking');

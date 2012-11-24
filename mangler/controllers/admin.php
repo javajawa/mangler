@@ -131,5 +131,13 @@ error:
 		$_SESSION['flash'] = 'Post has been published';
 		$this->redirect($_SERVER['HTTP_REFERER']);
 	}
-}
 
+	public function delete()
+	{
+		$id = $this->params->post;
+
+		\Mangler\Database::deletePost($id);
+		$_SESSION['flash'] = 'Post deleted successfully';
+		$this->redirect('/admin', 303);
+	}
+}

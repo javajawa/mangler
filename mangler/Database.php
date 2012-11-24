@@ -59,6 +59,11 @@ class Database
 		return self::$conn->storedProcedure('publishPost', array($id), 'Post')->singleton();
 	}
 
+	public static function deletePost($id)
+	{
+		return self::$conn->storedProcedure('deletePost', array($id));
+	}
+
 	public static function getAuthor($handle, $email)
 	{
 		return self::$conn->storedProcedure('getAuthor', array($handle, $email), 'User')->singleton();

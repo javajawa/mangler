@@ -300,6 +300,12 @@ CREATE FUNCTION "createPost"(handle character varying) RETURNS integer
 		);
 	$_$;
 
+CREATE FUNCTION "deletePost"(_id int) RETURNS void
+	LANGUAGE sql STRICT SECURITY DEFINER
+	AS $_$
+		DELETE FROM "blog"."post" WHERE post_id = $1;
+	$_$;
+
 CREATE FUNCTION "createReply"(author integer, parent integer) RETURNS integer
 	LANGUAGE sql STRICT SECURITY DEFINER
 	AS $_$
