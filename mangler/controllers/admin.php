@@ -44,6 +44,7 @@ class Admin extends Controller
 			return $this->redirect('/admin', 303);
 		}
 
+		Database::begin();
 		try
 		{
 			$user    = $_SERVER['REMOTE_USER'];
@@ -55,11 +56,13 @@ class Admin extends Controller
 			$newPost = $newPost->singleton()->createPost;
 
 			Database::updatePost($newPost, $this->post->content, $this->post->title, $this->post->slug);
+			Database::commit();
 
 			return $this->redirect('/admin/edit/' . $newPost);
 		}
 		catch (DatabaseException $ex)
 		{
+			Database::rollback();
 			goto error;
 			(object)$ex;
 		}
