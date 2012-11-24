@@ -39,7 +39,10 @@ class Admin extends Controller
 			$_SERVER['REMOTE_USER'] = $_SERVER['REDIRECT_REMOTE_USER'];
 
 		if (empty($this->post->title) || empty($this->post->slug))
-			$this->redirect('/admin', 303);
+		{
+			$_SESSION['flash'] = 'A valid title and slug is required';
+			return $this->redirect('/admin', 303);
+		}
 
 		try
 		{
@@ -53,7 +56,7 @@ class Admin extends Controller
 
 			Database::updatePost($newPost, $this->post->content, $this->post->title, $this->post->slug);
 
-			$this->redirect('/admin/edit/' . $newPost);
+			return $this->redirect('/admin/edit/' . $newPost);
 		}
 		catch (DatabaseException $ex)
 		{
