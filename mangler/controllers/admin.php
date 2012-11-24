@@ -6,6 +6,8 @@ use \Mangler\Controller,
 	\Acorn\Database\DatabaseException,
 	\Mangler\Renderer\EditPost,
 	\Mangler\Renderer\PostInfo,
+	\Mangler\Renderer\PostTeaser,
+	\Mangler\Renderer\TagPicker,
 	\Mangler\Renderer\Table,
 	\Mangler\Site,
 	\Mangler\View\AdminView;
@@ -142,7 +144,22 @@ error:
 
 	public function tag()
 	{
+		$post = Database::getPost((int)$this->params->post);
 
+		if (isset($this->query->tag))
+		{
+			$tag = (int)$this->query->tag;
+			Database::addTag(array($post->id, $tag));
+		}
+
+		$tags = $post->getTags();
+		$allTags = Database::getTags(array(), 'Tag');
+
+		$view = new AdminView();
+		$view->add(new TagPicker($post, $tags, $allTags, $view));
+		$view->add(new PostTeaser($post, $view));
+
+		$view->render();
 	}
 
 	public function delete()

@@ -249,16 +249,28 @@ CREATE VIEW "all_posts" AS
 -- All Tags View
 CREATE VIEW "all_tags" AS
 	SELECT
+		"tags".tag_id,
 		"tags".tag,
 		"tags".tag_slug,
 		COUNT("post_tags".post_id) AS itemcount
 	FROM
-		tags NATURAL JOIN post_tags
+		tags NATURAL LEFT JOIN post_tags
 	GROUP BY
 		tags.tag_id, tags.tag, tags.tag_slug
 ;
 
 SET search_path = public, blog, pg_catalog;
+
+LANGUAGE plpgsql STRICT SECURITY DEFINER
+	AS $_$
+		BEGIN
+			IF 0 = (SELECT COUNT(*) FROM "blog"."post_tags" WHERE post_id = $1 AND tag_id = $2) THEN
+				INSERT INTO "blog"."post_tags" VALUES ($1, $2);
+			ELSE
+				DELETE FROM "blog"."post_tags" WHERE post_id = $1 AND tag_id = $2;
+			END IF;
+		END;
+	$_$
 
 CREATE FUNCTION authenticate(handle text, password text) RETURNS blog."user"
 	LANGUAGE sql STABLE STRICT SECURITY DEFINER
