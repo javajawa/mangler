@@ -16,7 +16,7 @@ class Database
 
 	public function __construct($connstring, $procedureNamespace = '', $entityNamesapce = '')
 	{
-		$this->instance = @pg_connect($connstring);
+		$this->instance = @pg_pconnect($connstring);
 
 		if (false === $this->instance)
 			throw new DatabaseConnectionException('Could not connect to database', 0);
