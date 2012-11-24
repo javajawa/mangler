@@ -45,6 +45,24 @@ class Database
 		return $this->instance->error . $this->instance->get_warnings();
 	}
 
+	public function begin()
+	{
+		pg_send_query($this->instance, 'BEGIN;');
+		while (false !== pg_get_result($this->instance));
+	}
+
+	public function commit()
+	{
+		pg_send_query($this->instance, 'COMMIT;');
+		while (false !== pg_get_result($this->instance));
+	}
+
+	public function rollback()
+	{
+		pg_send_query($this->instance, 'ROLLBACK;');
+		while (false !== pg_get_result($this->instance));
+	}
+
 	public function storedProcedure($procedure, array $params = array(), $entityClass = null)
 	{
 		// Create the statement

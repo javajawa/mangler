@@ -3,6 +3,10 @@ namespace Mangler;
 
 class Database
 {
+	/**
+	 *
+	 * @var \Acorn\Database\Database
+	 */
 	private static $conn = null;
 
 	public static function connect()
@@ -13,9 +17,6 @@ class Database
 
 	public static function __callStatic($name, $arguments)
 	{
-		if (null === self::$conn)
-			self::connect();
-
 		return self::$conn->__call($name, $arguments);
 	}
 
@@ -85,7 +86,7 @@ class Database
 
 	public static function getPosts()
 	{
-		return self::__callStatic('getPosts', array(array(), 'Post'));
+		return self::$conn->storedProcedure('getPosts', array(), 'Post');
 	}
 
 	public static function getUser($handle, $email = null)
@@ -96,5 +97,22 @@ class Database
 
 		return self::__callStatic('getUser', array($args, 'User'));
 	}
+
+
+	public static function begin()
+	{
+		self::$conn->begin();
+	}
+
+	public static function commit()
+	{
+		self::$conn->commit();
+	}
+
+	public static function rollback()
+	{
+		self::$conn->rollback();
+	}
 }
 
+Database::connect();
