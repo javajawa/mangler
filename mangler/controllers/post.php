@@ -73,12 +73,12 @@ class Post extends Controller
 
 		$_SESSION['reply-flash'] = 'Commenting is currently disabled';
 		return $this->redirect(Site::getUri($post) . '?reply=' . $parent . '#reply', 307);
-		/*$reply = Database::createReply($author, $parent);
 
-		Database::updatePost($post_id, $this->post->content);
-		Database::publishPost(array($post_id));
+		$reply = Database::createReply(null, $parent);
 
-		$this->redirect(Site::getUri($post), 303);*/
+		Database::updatePost($reply, $content);
+
+		$this->redirect(Site::getUri($post), 303);
 	}
 
 	private function postData($key)

@@ -56,16 +56,12 @@ class Database
 
 	public static function publishPost($id)
 	{
-		return self::__callStatic('publishPost',
-			array(array($id), 'Post')
-		)->singleton();
+		return self::$conn->storedProcedure('publishPost', array($id), 'Post')->singleton();
 	}
 
 	public static function getAuthor($handle, $email)
 	{
-		return self::__callStatic('getAuthor',
-			array(array($handle, $email), 'User')
-		)->singleton();
+		return self::$conn->storedProcedure('getAuthor', array($handle, $email), 'User')->singleton();
 	}
 
 	public static function getArchives($page, $tag=null)

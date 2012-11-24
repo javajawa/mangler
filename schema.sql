@@ -304,7 +304,7 @@ CREATE FUNCTION "createReply"(author integer, parent integer) RETURNS integer
 	LANGUAGE sql STRICT SECURITY DEFINER
 	AS $_$
 		INSERT INTO "blog"."post" (timestamp, user_id, status, root, reply)
-			SELECT NOW(), $1, 'draft'::status, root, $2
+			SELECT NOW(), $1, 'moderate'::status, root, $2
 				FROM   "blog"."post"
 				WHERE  "post"."post_id" = $2;
 
@@ -355,7 +355,9 @@ CREATE FUNCTION "getPosts"() RETURNS SETOF blog.all_posts
 
 CREATE FUNCTION "getRoot"(_post_id integer) RETURNS blog.all_posts
 	LANGUAGE sql IMMUTABLE STRICT
-	AS $_$SELECT * FROM all_posts WHERE id = (SELECT root FROM post WHERE post_id = $1);$_$;
+	AS $_$
+		SELECT * FROM blog."all_posts" WHERE id = (SELECT root FROM post WHERE post_id = $1);
+	$_$;
 
 CREATE FUNCTION "getTag"(_tag character) RETURNS blog.all_tags
 	LANGUAGE sql STABLE STRICT SECURITY DEFINER
