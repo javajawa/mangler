@@ -7,10 +7,12 @@ class Table extends Renderer
 {
 	protected $entities = array();
 	protected $fields;
+	protected $heading;
 
-	public function __construct($view)
+	public function __construct($view, $heading = null)
 	{
 		parent::__construct($view);
+		$this->heading = $heading;
 	}
 
 	public function add(Row $e)
@@ -20,7 +22,12 @@ class Table extends Renderer
 
 	protected function doRender()
 	{
-		$v = '<table>';
+		if ($this->heading !== null)
+			$v = '<h2>' . $this->heading . '</h2>' . PHP_EOL;
+		else
+			$v = '';
+
+		$v .= '<table>';
 		foreach ($this->entities as $entity)
 		{
 			$v .= "\t" . $entity->render() . PHP_EOL;

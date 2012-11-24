@@ -21,10 +21,18 @@ class Admin extends Controller
 
 	public function index()
 	{
-		$posts = Database::getPosts();
-
 		$view = new AdminView();
-		$postlist = new Table($view);
+
+		$posts = Database::getPosts();
+		$postlist = new Table($view, 'Posts');
+
+		foreach ($posts as $post)
+			$postlist->add(new PostInfo($post, $view));
+
+		$view->add($postlist);
+
+		$posts = Database::getComments();
+		$postlist = new Table($view, 'Comments');
 
 		foreach ($posts as $post)
 			$postlist->add(new PostInfo($post, $view));

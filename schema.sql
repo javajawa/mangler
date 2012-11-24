@@ -310,7 +310,7 @@ CREATE FUNCTION "createReply"(author integer, parent integer) RETURNS integer
 	LANGUAGE sql STRICT SECURITY DEFINER
 	AS $_$
 		INSERT INTO "blog"."post" (timestamp, user_id, status, root, reply)
-			SELECT NOW(), $1, 'moderate'::status, root, $2
+			SELECT NOW(), $1, 'draft'::status, root, $2
 				FROM   "blog"."post"
 				WHERE  "post"."post_id" = $2;
 
@@ -336,6 +336,12 @@ CREATE FUNCTION "getArchives"(page integer) RETURNS SETOF blog.published_posts
 CREATE FUNCTION "getArchives"(tag_slug text, page integer) RETURNS SETOF blog.published_posts
 	LANGUAGE sql STABLE STRICT SECURITY DEFINER COST 125 ROWS 10
 	AS $_$SELECT "blog"."published_posts".* FROM "blog"."published_posts" LEFT JOIN ("blog"."post_tags" NATURAL JOIN "blog"."tags") ON "blog"."published_posts".id = "blog"."post_tags".post_id WHERE "tag_slug" = $1 ORDER BY timestamp DESC OFFSET (10 * $2) LIMIT 10;$_$;
+
+CREATE FUNCTION "getComments"() RETURNS SETOF blog.all_comments
+	LANGUAGE sql STABLE STRICT SECURITY DEFINER ROWS 100
+	AS $_$
+		SELECT * FROM all_comments ORDER BY status, timestamp DESC;
+	$_$;
 
 CREATE FUNCTION "getComments"(_post_id integer) RETURNS SETOF blog.all_comments
 	LANGUAGE sql STABLE STRICT SECURITY DEFINER ROWS 100
