@@ -90,6 +90,8 @@ class Site
 			$stub = $e;
 		elseif ($e instanceof \Mangler\Entity\Post)
 			$stub = '/post/' . $e->slug;
+		elseif ($e instanceof \Mangler\Entity\Comment)
+			$stub = '/post/' . $e->slug . '#comment-' . $e->id;
 		elseif ($e instanceof \Mangler\Entity\Tag)
 			$stub = '/tag/' . $e->tag_slug;
 		else

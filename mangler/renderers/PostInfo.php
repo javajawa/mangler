@@ -12,10 +12,25 @@ class PostInfo extends Row
 	function __construct(Comment $post, View $view)
 	{
 		parent::__construct($view);
-		$this->items []= sprintf('<a href="%s">%s</a>', Site::getUri('/admin/edit/' . $post->id), $post->title);
+
+		if ($post instanceof Post)
+			$this->items []= sprintf('<a href="%s">%s</a>', Site::getUri('/admin/edit/' . $post->id), $post->title);
+		else
+			$this->items []= sprintf('<a href="%s">%s</a><br />%s<br />%s', Site::getUri('/admin/edit/' . $post->id), $post->title, $post->user, $post->email);
+
 		$this->items []= $post->timestamp;
-		$this->items []= sprintf('<a href="%s">Preview</a>', Site::getUri('/admin/preview/' . $post->id));
-		$this->items []= sprintf('<a href="%s">Publish</a>', Site::getUri('/admin/publish/' . $post->id));
-		$this->items []= $post->status;
+
+		switch ($post->status)
+		{
+			case 'published':
+				$this->items []= sprintf('<a href="%s">View</a>', Site::getUri($post));
+				break;
+			case 'moderate':
+			case 'draft':
+				$this->items []= sprintf('<a href="%s">Publish</a>', Site::getUri('/admin/publish/' . $post->id));
+				break;
+		}
+		$this->items []= sprintf('<a href="%s">Edit</a>', Site::getUri('/admin/edit/' . $post->id));
+		$this->items []= sprintf('<a href="%s">Delete</a>',  Site::getUri('/admin/delete/'  . $post->id));
 	}
 }
