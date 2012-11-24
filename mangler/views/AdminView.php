@@ -58,6 +58,11 @@ class AdminView extends \Acorn\View
 		</div>
 
 EOF;
+		if (isset($_SESSION['flash']))
+		{
+			echo '<div class="flash center">' . $_SESSION['flash'] . '</div>';
+			unset($_SESSION['flash']);
+		}
 	}
 
 	protected function foot()
