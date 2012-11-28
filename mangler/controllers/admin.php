@@ -91,6 +91,7 @@ error:
 			$this->redirect('/admin', 303);
 
 		if (isset($this->post->title))
+		{
 			Database::updatePost(
 				(int)$this->params->post,
 				$this->post->content,
@@ -98,6 +99,8 @@ error:
 				$this->post->slug,
 				date('Y-m-d H:i:s', strtotime($this->post->time))
 			);
+			$_SESSION['flash'] = 'Post has been Updated.';
+		}
 
 		$post = Database::getPost((int)$this->params->post);
 		if (null === $post)

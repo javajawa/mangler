@@ -238,11 +238,10 @@ CREATE OR REPLACE VIEW "all_posts" AS
 		"blob".post_data AS content,
 		"user".handle AS "user",
 		"user".email,
-		"post".status
+		"post".status,
+		"post".reply
 	FROM
 		"post" NATURAL JOIN "blob" NATURAL JOIN "user"
-	WHERE
-		"post".reply IS NULL
 	ORDER BY
 		"post"."timestamp" DESC;
 
@@ -380,7 +379,7 @@ CREATE OR REPLACE FUNCTION "getPost"(_post_id integer) RETURNS blog.all_posts
 CREATE OR REPLACE FUNCTION "getPosts"() RETURNS SETOF blog.all_posts
 	LANGUAGE sql STABLE STRICT SECURITY DEFINER
 	AS $_$
-		SELECT * FROM "blog"."all_posts"
+		SELECT * FROM "blog"."all_posts" WHERE reply IS NULL
 	$_$;
 
 CREATE OR REPLACE FUNCTION "getRoot"(_post_id integer) RETURNS blog.all_posts
