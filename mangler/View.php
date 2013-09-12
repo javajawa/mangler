@@ -74,6 +74,7 @@ abstract class View extends \Acorn\View
 			<div id="tagline">{$this->blogTagLine}</div>
 		</header>
 		<div id="sidebar">
+			<h3><a href="{$this->getUri('/')}">Home</a></h3>
 			<h3>Search</h3>
 			<form id="searchbox" action="{$this->getUri('/search')}" method="get">
 				<input name="s" value="" placeholder="Blog search" />
