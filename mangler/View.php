@@ -4,12 +4,14 @@ namespace Mangler;
 abstract class View extends \Acorn\View
 {
 	protected $title;
+	protected $description = null;
 	protected $blogTitle = Site::title;
 	protected $blogTagLine = Site::tagline;
 
-	public function __construct($title)
+	public function __construct($title, $description = null)
 	{
 		$this->title = $title;
+		$this->description = $description;
 	}
 
 	public function getUri($target)
@@ -37,6 +39,15 @@ abstract class View extends \Acorn\View
 		$tags = '';
 		$tags = $this->getTags();
 
+		$description = htmlentities(
+			strip_tags(str_replace(
+				"\n",
+				' ',
+				$this->description ?: Site::title . ' '. Site::tagline
+			))
+		);
+		$url = 'http://' . WWW_PATH . \Acorn\Request::url();
+
 		echo <<<EOF
 <!DOCTYPE html>
 <html id="top">
@@ -44,12 +55,17 @@ abstract class View extends \Acorn\View
 		<meta charset="UTF-8" />
 		<title>{$title}</title>
 		<link rel="stylesheet" type="text/css" href="{$this->getUri('/resources/style')}" />
-		<link href="http://fonts.googleapis.com/css?family=Marcellus+SC|Nunito:300" rel="stylesheet" type="text/css" />
+		<link href="http://fonts.googleapis.com/css?family=Nunito:300" rel="stylesheet" type="text/css" />
 		<link rel="alternate" href="{$this->getUri('/feed')}" type="application/rss+xml" />
 		<link rel="icon" href="{$this->getUri('/resources/img/bug.png')}" type="image/png" />
 		<!--[if lt IE 9]>
 			<script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
+		<meta property="og:title" content="{$title}" />
+		<meta property="og:url" content="{$url}" />
+		<meta property="og:description" content="{$description}" />
+		<meta property="og:type" content="website" />
+		<meta property="fb:profile_id" content="1040866428" />
 	</head>
 	<body>
 		&nbsp;
