@@ -1,7 +1,8 @@
 <?php
 namespace Mangler\View;
 
-use \Mangler\View;
+use \Mangler\View,
+	\Mangler\Renderer\PostTeaser;
 
 class Post extends View
 {
@@ -20,7 +21,7 @@ class Post extends View
 
 	public function __construct(\Mangler\Entity\Post $post, $reply)
 	{
-		parent::__construct($post->title);
+		parent::__construct($post->title, $post->description());
 		$this->post = new \Mangler\Renderer\Post($post, $this);
 		$this->form = new \Mangler\Renderer\ReplyForm($reply, $this);
 		$this->comments = new \Mangler\Renderer\CommentTree($post, $this);
