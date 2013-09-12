@@ -43,9 +43,9 @@ class Post extends Renderer
 		<span class="tags">Tags: {$tags}</span>
 		<span class="comments">{$this->post->commentcount} Comments</span>
 		<span class="share">Share:
-			<a href="http://facebook.com/sharer.php?u={$url}" class="share facebook">Facebook</a>
-			<a href="http://twitter.com/share?text={$urlTitle}&amp;url={$url}" class="share twitter">Twitter</a>
-			<a href="http://plus.google.com/share?url={$url}" class="share gplus">Google+</a>
+			<a rel="nofollow" target="_blank" href="http://facebook.com/sharer.php?u={$url}" class="share facebook">Facebook</a>
+			<a rel="nofollow" target="_blank" href="http://twitter.com/share?text={$urlTitle}&amp;url={$url}" class="share twitter">Twitter</a>
+			<a rel="nofollow" target="_blank" href="http://plus.google.com/share?url={$url}" class="share gplus">Google+</a>
 		</span>
 	</div>
 </article>
