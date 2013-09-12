@@ -1,6 +1,6 @@
 html
 {
-	background-image: url(img/background.png);
+	background: #e0e0ff url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAABlBMVEX4+Pj09PQf/c7fAAAAGUlEQVR4XnXIMQ0AAACDMPyb3gxA0qswVX1+vw/xW46qyAAAAABJRU5ErkJggg==);
 	font-family: Nunito,Calibri,'Open Sans',Helvetica,sans-serif;
 	font-size: 14px; color: #000;
 	min-height: 100%; overflow-y: scroll;
@@ -9,12 +9,12 @@ html
 body
 {
 	position: relative;
-	max-width: 140ex; min-height: 450px; min-width: 600px;
-	margin: 20px auto;
-	padding: 0 20px 0 200px;
+	max-width: 140ex; min-height: 800px; min-width: 600px;
+	margin: 0 auto;
+	padding: 0 20px 2em 220px;
 	box-sizing: border-box;
 
-	background-color : rgba(255, 255, 255, 0.3);
+	background-color: rgba(255, 255, 255, 0.5);
 }
 
 .flash

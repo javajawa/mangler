@@ -1,11 +1,10 @@
 #sidebar
 {
-	position: absolute; width: 170px;
-	left: 10px; top: 85px;	bottom: 0;
+	position: absolute; width: 180px;
+	left: 20px; bottom: 0; top: 8em;
 	border-right: 1px solid #888;
 	padding-top: 8px;
 	overflow-x: hidden;
-	border-top-right-radius: 6px;
 }
 
 
