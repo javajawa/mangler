@@ -8,6 +8,12 @@
 	border-top-right-radius: 6px;
 }
 
+
+#sidebar>h3>a
+{
+	color: inherit;
+}
+
 #sidebar>a
 {
 	line-height: 25px;
