@@ -48,7 +48,7 @@ class Controller extends \Acorn\Controller
 	 */
 	protected $eTag = false;
 
-	public function __construct($contentType = 'text/plain', $session = true)
+	public function __construct($contentType = 'text/plain', $session = false)
 	{
 		parent::__construct();
 		$this->contentType = $contentType;
@@ -198,10 +198,10 @@ class Controller extends \Acorn\Controller
 
 	protected function track()
 	{
-		return Database::beginTracking(array(
+		return false; /* Database::beginTracking(array(
 			session_id(),
 			Request::url(),
 			Request::referer()
-		))->singleton();
+		))->singleton();*/
 	}
 }
