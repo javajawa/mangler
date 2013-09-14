@@ -438,11 +438,12 @@ CREATE OR REPLACE FUNCTION "search"(keywords text, page integer) RETURNS SETOF b
 			"blog"."published_posts".*
 		FROM
 			"blog"."published_posts" JOIN "blog"."blob"
-				ON "blog"."published_posts".id = "blog"."blob".post_id
+				ON "blog"."published_posts".id = "blog"."blob".post_id,
+			to_tsquery('english', $1) query
 		WHERE
-			search_data @@ to_tsquery('english', $1)
+			query @@ search_data
 		ORDER BY
-			"timestamp" DESC
+			ts_rank_cd(search_data, query) DESC, "timestamp" DESC
 		OFFSET
 			(10 * $2)
 		LIMIT 10;
