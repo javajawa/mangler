@@ -20,20 +20,21 @@ class RSS extends View
 	{
 		parent::__construct($title);
 
+		$this->full  = $full;
 		$this->url   = $this->getUri($url);
 		$this->image = $this->getUri($image);
 		$this->description = $description;
 
-		foreach($items as $item)
+		foreach ($items as $item)
+		{
 			if ($item instanceof Syndicatable)
 			{
-				if ($this->published < $item->published())
-					$this->published = $item->published();
-				if ($this->updated < $item->lastUpdated())
-					$this->updated = $item->lastUpdated();
+				$this->published = max($this->published, $item->published());
+				$this->updated   = max($this->updated  , $item->lastUpdated());
 
-				$this->items []= new RSSItem($item, $this);
+				$this->items [] = new RSSItem($item, $this);
 			}
+		}
 
 		$this->published = date('r', $this->published);
 		$this->updated   = date('r', $this->updated);
@@ -48,7 +49,9 @@ class RSS extends View
 	{
 		$this->head();
 		foreach ($this->items as $item)
+		{
 			echo $item->render(2);
+		}
 		$this->foot();
 	}
 
@@ -75,6 +78,7 @@ EOF;
 
 	protected function foot($prev = null, $next = null, $ptext = 'Previous', $ntext = 'Next')
 	{
+		$prev = $next = $ptext = $ntext = null;
 		echo <<<EOF
 	</channel>
 </rss>

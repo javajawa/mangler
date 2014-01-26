@@ -2,8 +2,6 @@
 namespace Mangler\Controller;
 
 use \Mangler\Controller,
-	\Mangler\Time,
-	\Mangler\View\Login,
 	\Mangler\View\Page,
 	\Mangler\Database,
 	\Mangler\Site,
@@ -29,18 +27,26 @@ class Special extends Controller
 		$this->eTag = false;
 
 		if (isset($this->params->code))
+		{
 			$code = $this->params->code;
+		}
 		else
+		{
 			$code = 500;
+		}
 
 		$this->responseCode = $code;
 		$status = Acorn::HTTPStatusMessage($code);
 		$file   = RESOURCE_PATH . 'pages/' . $code . '.html';
 
 		if (!file_exists($file))
+		{
 			$view = new Page("<h2>Error code {$code} - {$status}</h2>", $status);
+		}
 		else
+		{
 			$view = new Page($file);
+		}
 
 		$view->render();
 	}
@@ -48,7 +54,6 @@ class Special extends Controller
 	public function page()
 	{
 		Database::connect();
-		$this->track();
 		if (isset($this->params->name) AND file_exists(RESOURCE_PATH . 'pages/' . $this->params->name . '.html'))
 		{
 			$view = new Page(RESOURCE_PATH . 'pages/' . $this->params->name . '.html');
@@ -67,16 +72,5 @@ class Special extends Controller
 		$posts = Database::getArchives(0);
 		$view  = new RSS($posts, Site::title, '/', '/resources/img/bug.png', Site::tagline);
 		$view->render();
-	}
-
-	public function login()
-	{
-		$view = new Login($this->query->continue, $this->post);
-		$view->render();
-	}
-
-	public function tracking()
-	{
-
 	}
 }

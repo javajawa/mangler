@@ -35,19 +35,14 @@ class AdminView extends \Acorn\View
 		<meta charset="UTF-8" />
 		<title>{$title}</title>
 		<link rel="stylesheet" type="text/css" href="{$this->getUri('/resources/style')}" />
-		<link href="http://fonts.googleapis.com/css?family=Nunito:300" rel="stylesheet" type="text/css" />
-		<link rel="alternate" href="{$this->getUri('/feed')}" type="application/rss+xml" />
 		<link rel="icon" href="{$this->getUri('/resources/img/bug.png')}" type="image/png" />
 	</head>
-	<body>
-		&nbsp;
+	<body style="max-width: 100%;">
 		<header>
 			<h1><a href="{$this->getUri('/')}">Blog</a> &mdash; Admin</h1>
 		</header>
 		<div id="sidebar">
-			<ul>
-				<li><a href="{$this->getUri('/admin')}">Admin Home</a></li>
-			</ul>
+			<h3><a href="{$this->getUri('/admin')}">Admin Home</a></h3>
 			<h3>Create Post</h3>
 			<form action="{$this->getUri('/admin/create')}" method="post">
 				<input name="title" placeholder="Post Title" />
@@ -83,7 +78,9 @@ EOF;
 	{
 		echo $this->head();
 		foreach ($this->sections as $s)
+		{
 			echo $s->render();
+		}
 		echo $this->foot();
 	}
 }

@@ -1,0 +1,11 @@
+.spoiler { color: transparent; position: relative; }
+.spoiler:hover { color: inherit; }
+.spoiler:before {
+	content: 'Spoiler - Hover to view ';
+	font-style: italic;
+	color: rgba(0,0,0,0.5);
+	position: static;
+	font-size: inherit;
+	font-family: inherit;
+	font-weight: inherit;
+}

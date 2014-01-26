@@ -1,19 +1,30 @@
 <?php
 namespace Mangler\Entity;
 
-use \Acorn\Entity,
-	\Acorn\Syndicatable,
+use \Acorn\Syndicatable,
 	\Mangler\Database,
-	\Mangler\Renderer\PostTeaser,
 	\Mangler\Footnotes,
 	\Acorn\TagParser\TagParser;
 
-class Post extends Comment implements Syndicatable
+class Post extends \Acorn\Entity implements Syndicatable
 {
+	protected $id;
+	protected $timestamp;
+	protected $title;
 	protected $slug;
-	protected $commentcount;
-	protected $comments;
+	protected $user;
+	protected $email;
 	protected $tags;
+	protected $content;
+
+	public function __get($name)
+	{
+		if ('timestamp' === $name)
+		{
+			return date('j M Y G:i', $this->timestamp);
+		}
+		return parent::__get($name);
+	}
 
 	public static function create($title, $content)
 	{
@@ -33,25 +44,15 @@ class Post extends Comment implements Syndicatable
 
 	public function __construct()
 	{
-		parent::__construct();
-		$this->comments = NULL;
 		$this->tags     = NULL;
-	}
-
-	public function getComments()
-	{
-		if (null === $this->comments)
-		{
-			$this->comments = Database::getComments(array($this->id, 'published'), 'Comment');
-		}
-		return $this->comments;
+		$this->timestamp = strtotime($this->timestamp);
 	}
 
 	public function getTags()
 	{
 		if (null == $this->tags)
 		{
-			$this->tags = Database::getTags(array($this->id), 'Tag');
+			$this->tags = Database::getTags($this->id);
 		}
 		return $this->tags;
 	}
@@ -87,10 +88,14 @@ class Post extends Comment implements Syndicatable
 		{
 			$teaser .= TagParser::strip($para) . PHP_EOL;
 			if (strlen($teaser) > 300)
+			{
 				break;
+			}
 		}
 		if (DEBUG)
+		{
 			$teaser = wordwrap($teaser);
+		}
 
 		return $teaser;
 	}

@@ -23,9 +23,13 @@ class Table extends Renderer
 	protected function doRender()
 	{
 		if ($this->heading !== null)
+		{
 			$v = '<h2>' . $this->heading . '</h2>' . PHP_EOL;
+		}
 		else
+		{
 			$v = '';
+		}
 
 		$v .= '<table>';
 		foreach ($this->entities as $entity)
@@ -49,7 +53,9 @@ abstract class Row extends Renderer
 	{
 		$v = '<tr>';
 		foreach ($this->items as $field)
+		{
 			$v .= '<td>' . $field . '</td>';
+		}
 		return $v . '</tr>';
 	}
 }

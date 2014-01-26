@@ -7,6 +7,17 @@
 	overflow-x: hidden;
 }
 
+@media (max-width: 640px)
+{
+	#sidebar
+	{
+		display: none;
+		position: static;
+		width: initial;
+		border: none;
+		overflow: initial;
+	}
+}
 
 #sidebar>h3>a
 {

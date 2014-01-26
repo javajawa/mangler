@@ -19,10 +19,14 @@ class Database
 		$this->instance = @pg_pconnect($connstring);
 
 		if (false === $this->instance)
+		{
 			throw new DatabaseConnectionException('Could not connect to database', 0);
+		}
 
 		if ('\\' !== substr($entityNamesapce, -1))
+		{
 			$entityNamesapce .= '\\';
+		}
 
 		$this->nsEntities  = $entityNamesapce;
 		$this->nsProcedure = $procedureNamespace;
@@ -75,7 +79,9 @@ class Database
 	{
 		// Create the statement
 		if (0 === count($params))
+		{
 			$statement = sprintf('SELECT * FROM "%s"();', $procedure);
+		}
 		else
 		{
 			try
@@ -98,7 +104,9 @@ class Database
 		}
 
 		if (false === empty($entityClass) && '\\' !== substr($entityClass, 0, 1))
+		{
 			$entityClass = $this->nsEntities . $entityClass;
+		}
 
 		return new Result($result, $entityClass);
 	}
@@ -127,7 +135,9 @@ class Database
 			$value = sprintf('array [%s]', implode(', ', $value));
 		}
 		else
+		{
 			throw new \Exception('Unable to bind param of type ' . ('object' === gettype($value) ? get_class($value) : gettype($value)) . ' at index ' . $key);
+		}
 	}
 
 	/**
@@ -178,9 +188,13 @@ class Result implements \Countable, \Iterator, \ArrayAccess
 	{
 		++$this->currentRow;
 		if ($this->currentRow < $this->rows)
+		{
 			$this->currentObject = pg_fetch_object($this->result, $this->currentRow, $this->class);
+		}
 		else
+		{
 			$this->currentObject = null;
+		}
 	}
 
 	public function rewind()
@@ -219,7 +233,9 @@ class Result implements \Countable, \Iterator, \ArrayAccess
 	public function singleton()
 	{
 		if (1 === $this->rows)
+		{
 			return $this[0];
+		}
 
 		return null;
 	}
@@ -281,7 +297,9 @@ abstract class Entity
 	public function __unset($name)
 	{
 		if (property_exists($this, $name))
+		{
 			$this->$name = null;
+		}
 	}
 }
 
@@ -290,8 +308,12 @@ abstract class MutableEntity extends Entity
 	public function __set($name, $value)
 	{
 		if (property_exists($this, $name))
+		{
 			$this->$name = $value;
+		}
 		else
+		{
 			throw new \Exception(sprintf('Property %s does not exist in Entity %s', $name, get_class($this)));
+		}
 	}
 }

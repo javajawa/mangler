@@ -16,15 +16,34 @@ class Footnotes
 		self::$notes = array();
 		self::$named_entries = array();
 		if (true === SEPARATE_CITE_NOTE)
+		{
 			self::$citations = array();
+		}
 		else
+		{
 			self::$citations = &self::$notes;
+		}
 	}
 
-	public static function mklatex($params, $content)
+	public static function mklatex(array $params, $content)
 	{
-		// TODO: combine $params to become the img paramters
-		return sprintf('<img src="http://chart.apis.google.com/chart?cht=tx&chl=%s" />', urlencode($content));
+		$attrs = array();
+		$params['src'] = 'http://chart.apis.google.com/chart?cht=tx&chl=' . urlencode($content);
+
+		foreach ($params as $key => $value)
+		{
+			if (true === $value)
+			{
+				$value = $key;
+			}
+			if (!empty($value))
+			{
+				$attrs[] = $key . '="' . htmlspecialchars($value) . '"';
+			}
+		}
+
+		$attrs = implode(' ', $attrs);
+		return sprintf('<img %s />', $attrs);
 	}
 
 	public static function footnote($atts, $content)
@@ -39,7 +58,9 @@ class Footnotes
 		self::$notes[$num] = &$note;
 
 		if (true === is_array($atts) && true === array_key_exists('name', $atts))
+		{
 			self::$named_entries[$atts['name']] = &$note;
+		}
 
 		return $note->getLink();
 	}
@@ -50,15 +71,21 @@ class Footnotes
 		$num = count(self::$citations) + 1;
 
 		if (array_key_exists('href', $atts))
+		{
 			$href = $atts['href'];
+		}
 		else
+		{
 			$href = null;
+		}
 
 		$note = new Citation(self::$slug, $num, $content, $href);
 		self::$citations[$num] = &$note;
 
 		if (array_key_exists('name', $atts))
+		{
 			self::$named_entries[$atts['name']] = &$note;
+		}
 
 		return $note->getLink();
 	}
@@ -66,9 +93,13 @@ class Footnotes
 	function backref(array $atts, $content)
 	{
 		if (array_key_exists('name', $atts) && array_key_exists($atts['name'], self::$named_entries))
+		{
 			return self::$named_entries[$atts['name']]->getLink();
+		}
 		else
+		{
 			return '';
+		}
 
 		(string)$content;
 	}
@@ -76,7 +107,9 @@ class Footnotes
 	public static function notes()
 	{
 		if (0 === count(self::$notes))
+		{
 			return '';
+		}
 
 		$ret = '<ol class="footnotes">' . PHP_EOL;
 		foreach (self::$notes as $note)
@@ -189,9 +222,13 @@ class Citation extends Note
 		$entry .= $this->content . PHP_EOL;
 
 		if ($this->href == null)
+		{
 			$entry .= self::$blankText . PHP_EOL;
+		}
 		else
+		{
 			$entry .= '<a href="' . $this->href . '" target="_blank">' . $this->href . '</a>';
+		}
 
 		$entry .= '</li>';
 

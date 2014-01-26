@@ -18,6 +18,16 @@ body
 	background-color: rgba(255, 255, 255, 0.5);
 }
 
+@media (max-width: 640px)
+{
+	body
+	{
+		min-width: 0;
+		padding: 0 10px 2em;
+		font-size: 16px;
+	}
+}
+
 .flash
 {
 	width: 40ex; text-align: center;

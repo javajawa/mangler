@@ -1,7 +1,8 @@
 <?php
 namespace Mangler\Controller;
 
-use \Mangler\Controller, \Mangler\Time;
+use \Mangler\Controller,
+	\Mangler\Time;
 
 class Resources extends Controller
 {
@@ -17,21 +18,27 @@ class Resources extends Controller
 
 		$tag  = '';
 		foreach ($files as $file)
+		{
 			$tag .= md5_file($file);
+		}
 
 		$this->eTag = md5($tag);
 		$this->cachePublic = true;
 		$this->cacheTime   = Time::LUNAR_MONTH;
 
 		if ($this->ifMatch() && false)
+		{
 			return;
+		}
 
 		$this->resetBuffer('text/css');
 
 		foreach ($files as $file)
 		{
 			if (DEBUG)
+			{
 				echo '/* ' . $file . ' */' . PHP_EOL;
+			}
 
 			$fh = fopen($file, 'rb');
 			fpassthru($fh);
@@ -45,21 +52,27 @@ class Resources extends Controller
 
 		$tag  = '';
 		foreach ($files as $file)
+		{
 			$tag .= md5_file($file);
+		}
 
 		$this->eTag = md5($tag);
 		$this->cachePublic = true;
 		$this->cacheTime   = Time::LUNAR_MONTH;
 
 		if ($this->ifMatch() && false)
+		{
 			return;
+		}
 
 		$this->resetBuffer('text/javascript');
 
 		foreach ($files as $file)
 		{
 			if (DEBUG)
+			{
 				echo '/* ' . $file . ' */' . PHP_EOL;
+			}
 
 			$fh = fopen($file, 'rb');
 			fpassthru($fh);
@@ -85,7 +98,9 @@ class Resources extends Controller
 		$this->cacheTime   = 2551443;
 		$this->eTag = md5_file($file);
 		if ($this->ifMatch())
+		{
 			return;
+		}
 
 		$fp = fopen($file, 'rb');
 		fpassthru($fp);

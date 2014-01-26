@@ -17,26 +17,29 @@ abstract class View extends \Acorn\View
 	public function getUri($target)
 	{
 		if ($target instanceof \Acorn\Entity)
+		{
 			return Site::getUri($target);
+		}
 		else
 		{
 			$src = WWW_PATH;
 			if ('/' === substr($src, -1))
+			{
 				$src = substr($src, 0, strlen($src) - 1);
+			}
 
-			return 'http://' . $src . $target;
+			return '//' . $src . $target;
 		}
 	}
 
 	public function getAvatarUri($email)
 	{
-		return 'http://' . WWW_PATH . '/avatar/' . md5(strtolower($email)) . '/50';
+		return '//' . WWW_PATH . '/avatar/' . md5(strtolower($email)) . '/50';
 	}
 
 	protected function head()
 	{
 		$title = (null !== $this->title ? $this->title . ' « ' : '') . $this->blogTitle;
-		$tags = '';
 		$tags = $this->getTags();
 
 		$description = htmlentities(
@@ -46,7 +49,7 @@ abstract class View extends \Acorn\View
 				$this->description ?: Site::title . ' '. Site::tagline
 			))
 		);
-		$url = 'http://' . WWW_PATH . \Acorn\Request::url();
+		$url = '//' . WWW_PATH . \Acorn\Request::url();
 
 		echo <<<EOF
 <!DOCTYPE html>
@@ -54,12 +57,10 @@ abstract class View extends \Acorn\View
 	<head>
 		<meta charset="UTF-8" />
 		<title>{$title}</title>
+		<meta name=viewport content="width=device-width, initial-scale=1" />
 		<link rel="stylesheet" type="text/css" href="{$this->getUri('/resources/style')}" />
 		<link rel="alternate" href="{$this->getUri('/feed')}" type="application/rss+xml" />
 		<link rel="icon" href="{$this->getUri('/resources/img/bug.png')}" type="image/png" />
-		<!--[if lt IE 9]>
-			<script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-		<![endif]-->
 		<meta property="og:title" content="{$title}" />
 		<meta property="og:url" content="{$url}" />
 		<meta property="og:description" content="{$description}" />
@@ -103,14 +104,22 @@ EOF;
 	protected function foot($prev = null, $next = null, $ptext = 'Previous', $ntext = 'Next')
 	{
 		if (null !== $prev)
+		{
 			$prev = sprintf('<a href="%s" rel="previous">%s</a>', $prev, $ptext);
+		}
 		else
+		{
 			$prev = '';
+		}
 
 		if (null !== $next)
+		{
 			$next = sprintf('<a href="%s" rel="next">%s</a>', $next, $ntext);
+		}
 		else
+		{
 			$next = '';
+		}
 
 		echo <<<EOF
 		<footer>
@@ -128,13 +137,20 @@ EOF;
 
 	private function getTags()
 	{
+		// Don't try and put tags on database error pages
 		if (false === Database::connected())
+		{
 			return '';
+		}
 
 		$tags = '';
-		foreach (Database::getTags(array(), 'Tag') as $tag)
+		foreach (Database::getTags() as $tag)
+		{
 			if ($tag->itemcount > 0)
+			{
 				$tags .= "\n\t\t\t\t<li><a href=\"{$this->getUri($tag)}\">{$tag->tag} ({$tag->itemcount})</a></li>";
+			}
+		}
 
 		return $tags;
 	}

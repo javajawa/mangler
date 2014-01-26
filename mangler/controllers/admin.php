@@ -9,7 +9,6 @@ use \Mangler\Controller,
 	\Mangler\Renderer\PostTeaser,
 	\Mangler\Renderer\TagPicker,
 	\Mangler\Renderer\Table,
-	\Mangler\Site,
 	\Mangler\View\AdminView;
 
 class Admin extends Controller
@@ -29,24 +28,21 @@ class Admin extends Controller
 		$postlist = new Table($view, 'Posts');
 
 		foreach ($posts as $post)
+		{
 			$postlist->add(new PostInfo($post, $view));
+		}
 
 		$view->add($postlist);
 
-		$posts = Database::getComments();
-		$postlist = new Table($view, 'Comments');
-
-		foreach ($posts as $post)
-			$postlist->add(new PostInfo($post, $view));
-
-		$view->add($postlist);
 		$view->render();
 	}
 
 	public function create()
 	{
 		if (array_key_exists('REDIRECT_REMOTE_USER', $_SERVER))
+		{
 			$_SERVER['REMOTE_USER'] = $_SERVER['REDIRECT_REMOTE_USER'];
+		}
 
 		if (empty($this->post->title) || empty($this->post->slug))
 		{
@@ -60,10 +56,11 @@ class Admin extends Controller
 			$user    = $_SERVER['REMOTE_USER'];
 			$user    = Database::getUser($user);
 			if ($user === null)
+			{
 				die;
+			}
 
-			$newPost = Database::createPost(array($user->handle));
-			$newPost = $newPost->singleton()->createPost;
+			$newPost = Database::createPost($user->handle);
 
 			Database::updatePost($newPost, $this->post->content, $this->post->title, $this->post->slug);
 			Database::commit();
@@ -73,14 +70,9 @@ class Admin extends Controller
 		catch (DatabaseException $ex)
 		{
 			Database::rollback();
-			goto error;
 			(object)$ex;
 		}
 
-		if (null === $newPost)
-			goto error;
-
-error:
 		$_SESSION['flash'] = 'An unexpected error occured when attempting to create the post';
 		$this->redirect('/admin', 303);
 	}
@@ -88,7 +80,9 @@ error:
 	public function edit()
 	{
 		if (empty($this->params->post))
+		{
 			$this->redirect('/admin', 303);
+		}
 
 		if (isset($this->post->title))
 		{
@@ -104,7 +98,9 @@ error:
 
 		$post = Database::getPost((int)$this->params->post);
 		if (null === $post)
+		{
 			$this->redirect('/admin', 303);
+		}
 
 		$view = new AdminView();
 		$view->add(new EditPost($post, $view));
@@ -152,11 +148,11 @@ error:
 		if (isset($this->query->tag))
 		{
 			$tag = (int)$this->query->tag;
-			Database::addTag(array($post->id, $tag));
+			Database::addTag($post->id, $tag);
 		}
 
 		$tags = $post->getTags();
-		$allTags = Database::getTags(array(), 'Tag');
+		$allTags = Database::getTags();
 
 		$view = new AdminView();
 		$view->add(new TagPicker($post, $tags, $allTags, $view));

@@ -17,8 +17,12 @@ class Archive extends View
 		$this->max   = $max;
 
 		foreach ($posts as $post)
+		{
 			if ($post instanceof \Mangler\Entity\Post)
+			{
 				$this->posts[] = new PostTeaser($post, $this);
+			}
+		}
 	}
 
 	public function render()
@@ -29,14 +33,18 @@ class Archive extends View
 		$i = 0;
 
 		if (null !== $this->title)
+		{
 			printf('%s<h2>%s</h2>%s%s<hr />%s', $indent, $this->title, PHP_EOL, $indent, PHP_EOL);
+		}
 
 		foreach ($this->posts as $post)
 		{
 			echo $post->render(2);
 
 			if (count($this->posts) !== ++$i)
+			{
 				printf('%s<hr />%s', $indent, PHP_EOL);
+			}
 		}
 
 		$prev = (0 !== $this->page) ?

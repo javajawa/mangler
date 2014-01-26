@@ -2,8 +2,7 @@
 namespace Mangler\Controller;
 
 use \Mangler\Controller,
-	\Mangler\Database,
-	\Mangler\Site;
+	\Mangler\Database;
 
 class Archive extends Controller
 {
@@ -16,7 +15,6 @@ class Archive extends Controller
 	public function after()
 	{
 		$this->eTag = true;
-		$this->track();
 		parent::after();
 	}
 
@@ -37,7 +35,7 @@ class Archive extends Controller
 		$page  = (int)$this->params->page;
 		$posts = Database::getArchives($page, $tag);
 
-		$tag   = Database::getTag(array($tag), 'Tag');
+		$tag   = Database::getTag($tag);
 		$tag   = $tag->singleton();
 		$count = $tag->itemcount;
 		$count = (int)floor($count / 10);

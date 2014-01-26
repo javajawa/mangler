@@ -13,6 +13,17 @@ header>h1
 	font-size: 24pt;
 }
 
+@media (max-width: 640px)
+{
+	header {
+		margin-left: 0;
+	}
+	header>h1
+	{
+		font-size: 18pt;
+	}
+}
+
 header>h1>a
 {
 	color:#000;

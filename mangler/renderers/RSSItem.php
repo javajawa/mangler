@@ -20,15 +20,21 @@ class RSSItem extends Renderer
 		$pubDate = date('r', $this->item->published());
 
 		if (true === $this->view->isFull())
+		{
 			$description = $this->item->content($this->view);
+		}
 		else
+		{
 			$description = $this->item->description($this->view);
+		}
 
-		$description = str_replace('href="/', 'href="http://' . $_SERVER['SERVER_NAME'] . '/', $description);
+		$description = str_replace('href="/', 'href="https://' . $_SERVER['SERVER_NAME'] . '/', $description);
 
 		$tags = '';
 		foreach ($this->item->getTags() as $tag)
+		{
 			$tags .= "\t" . '<category>' . $tag->tag . '</category>' . PHP_EOL;
+		}
 
 		return <<<EOF
 <item>
@@ -36,6 +42,7 @@ class RSSItem extends Renderer
 	<author>{$this->item->authorName()}</author>
 	<pubDate>{$pubDate}</pubDate>
 	<guid>{$this->view->getUri($this->item)}</guid>
+	<link>{$this->view->getUri($this->item)}</link>
 	<description>
 	<![CDATA[
 		{$description}

@@ -7,6 +7,14 @@ footer
 	border-top: 1px solid #888;
 }
 
+@media (max-width: 640px)
+{
+	footer {
+		margin: 20px 0 0;
+		width: auto;
+	}
+}
+
 footer>nav { text-align: center; }
 
 a[rel=next] { float: right; padding-right: 10px; }

@@ -5,6 +5,11 @@
 	padding: 8px 0;
 }
 
+@media (max-width: 640px)
+{
+	.info { font-size: 14px; line-height: 20px; }
+}
+
 .info>span, .info>a, .gotop, .share
 {
 	background-repeat: no-repeat;
@@ -20,7 +25,8 @@ span.share { padding-left: 0; }
 
 a.read-more
 {
-	padding: 1px 0 10px 50px;
+	display: inline-block;
+	margin: 1px 0 10px 50px;
 	font-style: italic;
 }
 

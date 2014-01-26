@@ -1,8 +1,6 @@
 <?php
 namespace Mangler;
 
-use \Acorn\Request;
-
 /**
  * 	Controller
  * 	All controllers _must_ extend this badman.
@@ -88,11 +86,7 @@ class Controller extends \Acorn\Controller
 			header('Vary: Accept-Encoding');
 			header('Cache-Control: max-age=' . (int)$this->cacheTime);
 			header('Expires: ' . date('r', time() + (int)$this->cacheTime));
-
-			if (true === $this->cachePublic)
-				header('Cache-Control: public', false);
-			else
-				header('Cache-Control: private', false);
+			header('Cache-Control: ' . ($this->cachePublic ? 'public' : 'private'), false);
 		}
 		else if (0 === $this->cacheTime)
 		{
@@ -106,7 +100,9 @@ class Controller extends \Acorn\Controller
 			$requestETag = isset($_SERVER['HTTP_IF_NONE_MATCH']) ? $_SERVER['HTTP_IF_NONE_MATCH'] : false;
 
 			if (true === $this->eTag)
+			{
 				$this->eTag = md5(ob_get_contents());
+			}
 
 			header('ETag: ' . $this->eTag);
 			if ($this->eTag === $requestETag)
@@ -132,30 +128,43 @@ class Controller extends \Acorn\Controller
 		ob_end_clean();
 
 		if (1 === preg_match('#^https?://#', $uri))
+		{
 			header('Location: ' . $uri, true, $code);
+		}
 		else
+		{
 			header('Location: http://' . WWW_PATH . $uri, true, $code);
+		}
 	}
 
 	public function ifMatch($tag = false)
 	{
 		if (false === $tag)
+		{
 			if (false === $this->eTag)
+			{
 				return false;
+			}
 			else
+			{
 				$tag = $this->eTag;
+			}
+		}
 
 		if (false === isset($_SERVER['HTTP_IF_NONE_MATCH']))
+		{
 			return false;
+		}
 
-		return $tag === $_SERVER['HTTP_IF_NONE_MATCH'];
+		return ($tag === $_SERVER['HTTP_IF_NONE_MATCH']);
 	}
 
 	public function handleException(\Exception $ex)
 	{
 		while (0 !== ob_get_level())
+		{
 			ob_end_clean();
-
+		}
 
 		$exceptions = array();
 		while (null !== $ex)
@@ -173,10 +182,14 @@ class Controller extends \Acorn\Controller
 	public function handleError(array $err)
 	{
 		if (!(error_reporting() & $err['type']))
+		{
 			return true;
+		}
 
 		while (0 !== ob_get_level())
+		{
 			ob_end_clean();
+		}
 
 		$view = new \Mangler\View\Error(array(
 			new \Acorn\Error($err)
@@ -194,14 +207,5 @@ class Controller extends \Acorn\Controller
 	public function min($str)
 	{
 		return preg_replace('/[\n\t ][\n\t ]+/', ' ', $str);
-	}
-
-	protected function track()
-	{
-		return false; /* Database::beginTracking(array(
-			session_id(),
-			Request::url(),
-			Request::referer()
-		))->singleton();*/
 	}
 }

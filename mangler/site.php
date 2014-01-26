@@ -1,7 +1,7 @@
 <?php
 namespace Mangler;
 
-use \Acorn\Acorn, \Acorn\Routes, \Acorn\Entity;
+use \Acorn\Acorn, \Acorn\Routes;
 
 error_reporting(E_ALL | E_STRICT);
 
@@ -52,9 +52,6 @@ Routes::route('/search/?query/?page', 'search', 'search');
 // An individual post
 Routes::route('/post/?slug', 'post', 'get');
 
-// Making a reply
-Routes::route('/reply/?parent', 'post', 'reply');
-
 // Styles and other resources
 Routes::route('/resources/style', 'resources', 'style');
 Routes::route('/resources/js',    'resources', 'script');
@@ -72,9 +69,6 @@ Routes::route('/admin/create', 'admin', 'create');
 Routes::route('/admin/delete/?post', 'admin', 'delete');
 Routes::route('/admin/tag/?post', 'admin', 'tag');
 
-// AJAX Requests
-Routes::route('/ajax/tracking', 'special', 'tracking');
-
 /**
  * <p>Class containing some pieces of constant information about the site
  * along with some site-specific utility functions</p>
@@ -88,17 +82,23 @@ class Site
 	public static function getUri($e)
 	{
 		if (is_string($e))
+		{
 			$stub = $e;
+		}
 		elseif ($e instanceof \Mangler\Entity\Post)
+		{
 			$stub = '/post/' . $e->slug;
-		elseif ($e instanceof \Mangler\Entity\Comment)
-			$stub = '/post/' . $e->slug . '#comment-' . $e->id;
+		}
 		elseif ($e instanceof \Mangler\Entity\Tag)
+		{
 			$stub = '/tag/' . $e->tag_slug;
+		}
 		else
+		{
 			trigger_error('Unable to find link for ' . $e, E_USER_ERROR);
+		}
 
-		return 'http://' . WWW_PATH . $stub;
+		return '//' . WWW_PATH . $stub;
 	}
 }
 

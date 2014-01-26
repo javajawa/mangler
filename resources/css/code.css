@@ -13,5 +13,6 @@ code
 }
 
 code:hover, code.inline { max-height: none; }
+code.inline { overflow: visible; }
 code.stackframe { white-space: nowrap; }
 

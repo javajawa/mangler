@@ -33,7 +33,9 @@ class Page extends View
 			fclose($this->fh);
 		}
 		else
+		{
 			echo $this->text;
+		}
 
 		$this->foot();
 	}
